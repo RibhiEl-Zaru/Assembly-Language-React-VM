@@ -1,0 +1,53 @@
+Arguments: 
+  /opt/local/bin/node /opt/local/libexec/yarn/bin/yarn.js install
+
+PATH: 
+  /opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/Library/Frameworks/Python.framework/Versions/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin
+
+Yarn version: 
+  0.18.1
+
+Node version: 
+  6.9.1
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "weather",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+      "bootstrap": "^3.3.7",
+      "bootswatch": "^3.3.7",
+      "nw-react-slider": "^2.0.1",
+      "react": "^15.5.4",
+      "react-ace": "^5.2.0",
+      "react-bootstrap": "^0.30.10",
+      "react-center": "^1.1.1",
+      "react-dom": "^15.5.4",
+      "react-dropzone": "^4.1.3",
+      "react-file-reader": "^1.1.2",
+      "react-timeout": "^1.0.1"
+    },
+    "devDependencies": {
+      "react-scripts": "0.9.5"
+    },
+    "scripts": {
+      "start": "react-scripts start",
+      "build": "react-scripts build",
+      "test": "react-scripts test --env=jsdom",
+      "eject": "react-scripts eject"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: EACCES: permission denied, rmdir '/Users/ribhiel-zaru/Desktop/Coding Stuff/Casual Coding/React/cs101H-WebApp/node_modules/opencollective/node_modules'
+      at Error (native)
