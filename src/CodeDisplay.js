@@ -4,6 +4,8 @@ import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-boots
 import Center from 'react-center';
 import DropZone from "./CodeDisplayContents/DropZone.js"
 import ControlConsole from "./CodeDisplayContents/ControlConsole.js"
+
+import FileUploadButton from "./CodeDisplayContents/FileUploadButton.js"
 //import ReactFileReader from 'react-file-reader';
 //import CodeEditor from "./CodeDisplayContainer/CodeEditor.js";
 
@@ -43,6 +45,9 @@ export default class CodeDisplay extends React.Component {
            <Center> {this.props.notification}  </Center>
       </div>
       <Center>
+          <FileUploadButton changeNoti = {this.props.changeNoti} fileArray = {this.state.fileArray} setFiles = {this.onFileDrop.bind(this)}/>
+      </Center>
+      <Center>
           <ControlConsole
                 compileCode = {this.props.compileCode}
                 playCode = {this.props.playCode}
@@ -50,11 +55,6 @@ export default class CodeDisplay extends React.Component {
                 timerChange = {this.props.timerChange}
                 />
       </Center>
-      <div id = "compiler" >
-        <Center>
-            <DropZone changeNoti = {this.props.changeNoti} fileArray = {this.state.fileArray} setFiles = {this.onFileDrop.bind(this)}/>
-        </Center>
-      </div>
       <row>
       </row>
 
@@ -65,6 +65,7 @@ export default class CodeDisplay extends React.Component {
 
 
     onFileDrop(fileArray){
+      console.log("settingFile");
       this.setState({fileArray});
 
       fileArray.forEach(file => {

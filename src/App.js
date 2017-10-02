@@ -9,6 +9,7 @@ import ReactTimeout from 'react-timeout'
 import CodeDisplay from "./CodeDisplay.js";
 import AssemblyLanguageInstructions from "./AssemblyLanguageInstructions.js";
 import DataDisplay from "./DataDisplay.js";
+import FileUploadButton from "./CodeDisplayContents/FileUploadButton.js"
 
 let successfulCompilationNoti = "Compilation Successful!";
 let OP_REGS = [
@@ -91,35 +92,33 @@ class App extends React.Component {
   render() {
     return (
       <div>
-
-        <Navbar>
-          <Navbar.Header>
-            <Navbar.Brand>
-              CS101 Honors Web App
-            </Navbar.Brand>
-          </Navbar.Header>
-        </Navbar>
-        <Grid>
-          <Row>
-            <Col md={4} sm={3}>
-              <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
-                           timer = {this.state.timer}
-                           timerChange = {this.setTimer.bind(this)}
-                           compileCode = {this.compileCode.bind(this)}
-                           changeCode = {this.handleChange.bind(this)}
-                           changeNoti = {this.setNotification.bind(this)}
-                           playCode = {this.executeCode.bind(this)}
-                           code = {this.state.code}
-                           notification = {this.state.notification}
-                          />
-            </Col>
-            <Col md={8} sm={9}>
-              <DataDisplay opRegs = {this.state.operationRegs}  utilRegs = {this.state.utilRegs}
-              />
-            </Col>
-          </Row>
-        </Grid>
-
+              <Navbar>
+                <Navbar.Header>
+                  <Navbar.Brand>
+                    CS101 Honors Web App
+                  </Navbar.Brand>
+                </Navbar.Header>
+              </Navbar>
+              <Grid>
+                <Row>
+                  <Col md={4} sm={3}>
+                    <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
+                                 timer = {this.state.timer}
+                                 timerChange = {this.setTimer.bind(this)}
+                                 compileCode = {this.compileCode.bind(this)}
+                                 changeCode = {this.handleChange.bind(this)}
+                                 changeNoti = {this.setNotification.bind(this)}
+                                 playCode = {this.executeCode.bind(this)}
+                                 code = {this.state.code}
+                                 notification = {this.state.notification}
+                                />
+                  </Col>
+                  <Col md={8} sm={9}>
+                    <DataDisplay opRegs = {this.state.operationRegs}  utilRegs = {this.state.utilRegs}
+                    />
+                  </Col>
+                </Row>
+              </Grid>
       </div>
     );
   }
@@ -369,6 +368,38 @@ class App extends React.Component {
   }
 
 }
+
+/*
+
+        <Navbar>
+          <Navbar.Header>
+            <Navbar.Brand>
+              CS101 Honors Web App
+            </Navbar.Brand>
+          </Navbar.Header>
+        </Navbar>
+        <Grid>
+          <Row>
+            <Col md={4} sm={3}>
+              <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
+                           timer = {this.state.timer}
+                           timerChange = {this.setTimer.bind(this)}
+                           compileCode = {this.compileCode.bind(this)}
+                           changeCode = {this.handleChange.bind(this)}
+                           changeNoti = {this.setNotification.bind(this)}
+                           playCode = {this.executeCode.bind(this)}
+                           code = {this.state.code}
+                           notification = {this.state.notification}
+                          />
+            </Col>
+            <Col md={8} sm={9}>
+              <DataDisplay opRegs = {this.state.operationRegs}  utilRegs = {this.state.utilRegs}
+              />
+            </Col>
+          </Row>
+        </Grid>
+
+*/
 
 
 export default App;
