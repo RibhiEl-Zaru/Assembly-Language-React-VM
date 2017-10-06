@@ -28,36 +28,37 @@ export default class CodeDisplay extends React.Component {
       <div id = "parent">
 
         <div id = "editor">
-      <Col>
-      <AceEditor
-         mode="python"
-         theme="solarized_dark"
-         onChange={this.onEditorChange.bind(this)}
-         width = {this.props.width/2}
-         value = {this.props.code}
-         name="UNIQUE_ID_OF_DIV"
-         editorProps={{$blockScrolling: true}}
-        />
 
-      </Col>
+          <AceEditor
+             mode="python"
+             theme="solarized_dark"
+             onChange={this.onEditorChange.bind(this)}
+             width = {this.props.width/2}
+             value = {this.props.code}
+             name="UNIQUE_ID_OF_DIV"
+             editorProps={{$blockScrolling: true}}
+            />
+
       </div>
+
       <div id = "notification" >
            <Center> {this.props.notification}  </Center>
       </div>
-      <Center>
-          <FileUploadButton changeNoti = {this.props.changeNoti} fileArray = {this.state.fileArray} setFiles = {this.onFileDrop.bind(this)}/>
-      </Center>
-      <Center>
-          <ControlConsole
-                compileCode = {this.props.compileCode}
-                playCode = {this.props.playCode}
-                timer = {this.props.timer}
-                timerChange = {this.props.timerChange}
-                />
-      </Center>
-      <row>
-      </row>
 
+      <div>
+          <Center>
+
+              <ControlConsole
+                    compileCode = {this.props.compileCode}
+                    changeNoti = {this.props.changeNoti}
+                    fileArray = {this.state.fileArray}
+                    playCode = {this.props.playCode}
+                    timer = {this.props.timer}
+                    setFiles = {this.onFileDrop.bind(this)}
+                    timerChange = {this.props.timerChange}
+                    />
+          </Center>
+      </div>
       </div>
     )
   }
@@ -65,7 +66,6 @@ export default class CodeDisplay extends React.Component {
 
 
     onFileDrop(fileArray){
-      console.log("settingFile");
       this.setState({fileArray});
 
       fileArray.forEach(file => {

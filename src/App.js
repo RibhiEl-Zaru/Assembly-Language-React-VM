@@ -57,8 +57,8 @@ class App extends React.Component {
   }
 
   myTimer( e){
-    console.log("e is " , e);
-    console.log("I DID THIS" + e);
+
+
   }
 
 
@@ -101,7 +101,7 @@ class App extends React.Component {
               </Navbar>
               <Grid>
                 <Row>
-                  <Col md={4} sm={3}>
+                  <Col md={6} sm={6} lg = {6}>
                     <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
                                  timer = {this.state.timer}
                                  timerChange = {this.setTimer.bind(this)}
@@ -113,8 +113,10 @@ class App extends React.Component {
                                  notification = {this.state.notification}
                                 />
                   </Col>
-                  <Col md={8} sm={9}>
-                    <DataDisplay opRegs = {this.state.operationRegs}  utilRegs = {this.state.utilRegs}
+                  <Col md={6} sm={6} lg = {6}>
+                    <DataDisplay
+                        opRegs = {this.state.operationRegs}
+                        utilRegs = {this.state.utilRegs}
                     />
                   </Col>
                 </Row>
@@ -131,7 +133,6 @@ class App extends React.Component {
 
       let instruct = instructions[i];
 
-      console.log(instruct);
       let instr = instruct[0];
       let reg1Info = instruct[1];
       let reg2Info = instruct[2];
@@ -148,11 +149,6 @@ class App extends React.Component {
       var home = this;
 
       setTimeout((function(){
-
-         console.log("currLine: "+ home.state.currLine);
-
-         console.log(z);
-
          if(reg1Info != null){
            reg1 = OP_REGS[parseInt(reg1Info.substr(-1))];
          }
@@ -186,8 +182,7 @@ class App extends React.Component {
     }
   }
 
-  compileCode(){
-
+compileCode(){
       this.resetRegisters()
       this.setState({operationRegs : OP_REGS});
 
@@ -195,6 +190,9 @@ class App extends React.Component {
 
       let rawCode = this.state.code.replace(/(\r\n|\n|\r)/gm,"");
 
+      if(!rawCode.includes(";")){
+        this.setNotification("Make sure you end your lines with ;");
+      }
       compiledCode = rawCode.split(";");
       compiledCode.splice(-1, 1); //For some reason there is always an extra space character at the end. This deals with that.
 
@@ -329,6 +327,8 @@ class App extends React.Component {
 
             this.setNotification(successfulCompilationNoti);
       }
+
+
     }
 
 
@@ -369,37 +369,6 @@ class App extends React.Component {
 
 }
 
-/*
-
-        <Navbar>
-          <Navbar.Header>
-            <Navbar.Brand>
-              CS101 Honors Web App
-            </Navbar.Brand>
-          </Navbar.Header>
-        </Navbar>
-        <Grid>
-          <Row>
-            <Col md={4} sm={3}>
-              <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
-                           timer = {this.state.timer}
-                           timerChange = {this.setTimer.bind(this)}
-                           compileCode = {this.compileCode.bind(this)}
-                           changeCode = {this.handleChange.bind(this)}
-                           changeNoti = {this.setNotification.bind(this)}
-                           playCode = {this.executeCode.bind(this)}
-                           code = {this.state.code}
-                           notification = {this.state.notification}
-                          />
-            </Col>
-            <Col md={8} sm={9}>
-              <DataDisplay opRegs = {this.state.operationRegs}  utilRegs = {this.state.utilRegs}
-              />
-            </Col>
-          </Row>
-        </Grid>
-
-*/
 
 
 export default App;

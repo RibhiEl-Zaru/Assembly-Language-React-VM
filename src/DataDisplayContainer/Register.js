@@ -1,6 +1,6 @@
 import React from "react";
-import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
-
+import { Center, Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
+import styles from '../App.css';
 export default class Register extends React.Component {
 
   constructor(props){
@@ -16,7 +16,22 @@ export default class Register extends React.Component {
 
   render(){
     return(
-       <h3>  <Label > {this.props.name} :  {this.props.value}</Label> </h3>
+
+       <h3>
+       <Label>
+          {this.props.name} :  {this.props.value}
+         </Label>
+      </h3>
+
     )
   }
 }
+
+/*
+<Label
+
+  >
+   {this.props.name} :  {this.props.value}
+  </Label>
+
+*/

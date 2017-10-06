@@ -18,7 +18,27 @@
   font-size: large;
 }
 
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.parent {
+  border : 5px solid lightcoral;
+}
+
+.register {
+  height: 50px;
+  width : 50px;
+  background: DeepSkyBlue;
+  color : white;
+  text-align: center;
+  line-height: 50px;
+  font-weight: 600;
+}
+
+
+/***                Flex Stuf       ***/
+
+.parent {display: flex}

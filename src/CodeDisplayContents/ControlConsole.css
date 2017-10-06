@@ -1,0 +1,8 @@
+.parent {
+  border : 5px solid lightcoral;
+}
+
+
+/***                Flex Stuf       ***/
+
+.parent {display: flex}
