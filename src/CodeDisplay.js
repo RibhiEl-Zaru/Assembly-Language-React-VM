@@ -31,6 +31,7 @@ export default class CodeDisplay extends React.Component {
 
           <AceEditor
              mode="python"
+             fontSize= "16pt"
              theme="solarized_dark"
              onChange={this.onEditorChange.bind(this)}
              width = {this.props.width/2}

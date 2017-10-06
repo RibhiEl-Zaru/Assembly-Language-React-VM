@@ -5,7 +5,7 @@ import './App.css';
 import "bootswatch/journal/bootstrap.css";
 import { Label, Navbar, NavItem, Nav, Grid, Row, Col } from "react-bootstrap";
 import ReactTimeout from 'react-timeout'
-
+import Center from 'react-center';
 import CodeDisplay from "./CodeDisplay.js";
 import AssemblyLanguageInstructions from "./AssemblyLanguageInstructions.js";
 import DataDisplay from "./DataDisplay.js";
@@ -14,10 +14,10 @@ import FileUploadButton from "./CodeDisplayContents/FileUploadButton.js"
 let successfulCompilationNoti = "Compilation Successful!";
 let OP_REGS = [
   // May have to explicitly declare these as registers.
-  { name: "R0", value: 1 },
-  { name: "R1", value: 2 },
-  { name: "R2", value: 3 },
-  { name: "R3", value: 5 },
+  { name: "R0", value: 0 },
+  { name: "R1", value: 0 },
+  { name: "R2", value: 0 },
+  { name: "R3", value: 0 },
 ];
 
 let UTIL_REGS = [
@@ -27,10 +27,13 @@ let UTIL_REGS = [
 
 ];
 
+let MEMORY_OPS = [{instruction: "STR RO R1", address: "x04", value: 5}, {instruction: "STR RO R1", address: "x04", value: 5} ];
+
 var InstrTypes = {
   NONE: "X",
   REGISTER: "R",
   IMMEDIATE: "I",
+  MEMORY: "M",
   JUMP: "J",
 
 };
@@ -50,6 +53,7 @@ class App extends React.Component {
       code : "",
       operationRegs : OP_REGS,
       utilRegs : UTIL_REGS,
+      memoryOps : MEMORY_OPS,
       currLine : 0,
       timer : 3,
     }
@@ -101,7 +105,7 @@ class App extends React.Component {
               </Navbar>
               <Grid>
                 <Row>
-                  <Col md={6} sm={6} lg = {6}>
+                  <Col md={8} sm={8} lg = {8}>
                     <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
                                  timer = {this.state.timer}
                                  timerChange = {this.setTimer.bind(this)}
@@ -113,10 +117,11 @@ class App extends React.Component {
                                  notification = {this.state.notification}
                                 />
                   </Col>
-                  <Col md={6} sm={6} lg = {6}>
+                  <Col md={4} sm={4} lg = {4}>
                     <DataDisplay
                         opRegs = {this.state.operationRegs}
                         utilRegs = {this.state.utilRegs}
+                        memoryOps = {this.state.memoryOps}
                     />
                   </Col>
                 </Row>
@@ -192,6 +197,10 @@ compileCode(){
 
       if(!rawCode.includes(";")){
         this.setNotification("Make sure you end your lines with ;");
+        var home = this;
+        setTimeout((function(){
+          home.setNotification("")
+        }), 3000);
       }
       compiledCode = rawCode.split(";");
       compiledCode.splice(-1, 1); //For some reason there is always an extra space character at the end. This deals with that.
@@ -207,9 +216,12 @@ compileCode(){
 
         //Get the Operation and determine if it's an R, I or J instruction.
         let opType = armInstrs.getMethodType(op);
-        console.log(opType);
+
         if(opType == InstrTypes.NONE){
             this.setNotification("Operation in line " + (i+1) + " is not found");
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
             break;
         }
         if(opType == InstrTypes.IMMEDIATE){
@@ -229,7 +241,10 @@ compileCode(){
           regExists = this.testForRegisterPresence(rs);
 
           if(!regExists /*The Source Register does not exist*/){
-            this.setNotification("Source Register in line " + (i+1) + " does not exist");
+            this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
             break;
           }
 
@@ -239,7 +254,10 @@ compileCode(){
           regExists = this.testForRegisterPresence(rd);
           if(!regExists /*The Value Register does not exist*/){
 
-            this.setNotification("Dest Register in line " + (i+1) + " does not exist");
+            this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
             break;
 
           }
@@ -250,7 +268,6 @@ compileCode(){
           e = e.substring(e.indexOf(" ")+1, e.length);
           // Trim out all the spaces and new lines.
           e = e.trim();
-        //    console.log("Op : " + op + " rs " + rs + " rt : " + rt + " rd : " + rd);
 
           instructions.push([op, rs, null, rd , im, null]);
           this.setNotification(successfulCompilationNoti);
@@ -273,7 +290,10 @@ compileCode(){
             regExists = this.testForRegisterPresence(rs);
 
             if(!regExists /*The Source Register does not exist*/){
-              this.setNotification("Source Register in line " + (i+1) + " does not exist");
+              this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
+              setTimeout((function(){
+                home.setNotification("")
+              }), 3000);
               break;
             }
 
@@ -283,7 +303,10 @@ compileCode(){
             regExists = this.testForRegisterPresence(rt);
             if(!regExists /*The Value Register does not exist*/){
 
-              this.setNotification("Value Register in line " + (i+1) + " does not exist");
+              this.setNotification("Value Register in instruction " + (i+1) + " does not exist");
+              setTimeout((function(){
+                home.setNotification("")
+              }), 3000);
               break;
 
             }
@@ -293,20 +316,23 @@ compileCode(){
             regExists = this.testForRegisterPresence(rd);
             if(!regExists /*The Value Register does not exist*/){
 
-              this.setNotification("Destination Register in line " + (i+1) + " does not exist");
+              this.setNotification("Destination Register in instruction " + (i+1) + " does not exist");
+              setTimeout((function(){
+                home.setNotification("")
+              }), 3000);
               break;
 
             }
 
             e = e.substring(e.indexOf(" ")+1, e.length);
-            // Trim out all the spaces and new lines.
             e = e.trim();
-        //    console.log("Op : " + op + " rs " + rs + " rt : " + rt + " rd : " + rd);
 
             instructions.push([op, rs, rt, rd, null, null]);
 
             this.setNotification(successfulCompilationNoti);
-
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
       }
       else if (opType == InstrTypes.JUMP) {
             /**
@@ -319,13 +345,18 @@ compileCode(){
             address = e.substring(0, e.indexOf(" "));
 
             e = e.substring(e.indexOf(" ")+1, e.length);
-            // Trim out all the spaces and new lines.
             e = e.trim();
-        //    console.log("Op : " + op + " rs " + rs + " rt : " + rt + " rd : " + rd);
 
             instructions.push([op, null, null, null, null, address]);
 
             this.setNotification(successfulCompilationNoti);
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
+      }
+      else if (opType == InstrTypes.MEMORY){
+
+
       }
 
 

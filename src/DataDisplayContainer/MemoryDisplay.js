@@ -1,28 +1,36 @@
 import React from "react";
+import RegisterDisplay from "./RegisterDisplay.js"
+import Center from 'react-center';
+import DataRow from "./DataRow.js"
+
 import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
 
-import Register from "./Register.js"
-import RegisterCol from "./RegisterCol.js"
-
 export default class MemoryDisplay extends React.Component {
-
   constructor(props){
-    super(props);
-    this.state = {
-      utilRegs : this.props.utilRegs,
-      opRegs : this.props.opRegs,
+    super(props)
+
+    this.state ={
+      memoryOps : this.props.memoryOps
+
     }
   }
-
-  setRegisters(registers){
-    this.setState({registers});
-  }
-
   render(){
     return(
       <div>
-      MemoryDisplay
-
+      <div>
+        <Grid>
+          {this.state.memoryOps.map((memOp, index) => (
+            <div>
+            
+            <DataRow
+              instruction = {memOp.instruction}
+              address = {memOp.address}
+              value = {memOp.value}
+            />
+            </div>
+          ))}
+        </Grid>
+      </div>
       </div>
     )
   }

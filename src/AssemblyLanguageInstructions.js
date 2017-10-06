@@ -15,11 +15,12 @@ var MethodEnum = {
   AND: "AND",
   ANDI: "ANDI",
 
-  properties: {
-    "ADD": {name: "ADD", value: 1, code: "R"},
-    "ADDI": {name: "ADDI", value: 2, code: "I"},
-    "AND": {name: "AND", value: 3, code: "R"},
-    "ANDI": {name: "ANDI", value: 4, code: "I"}
+  methods: {
+    "ADD": {name: "ADD", code: "R"},
+    "ADDI": {name: "ADDI", code: "I"},
+    "AND": {name: "AND", code: "R"},
+    "ANDI": {name: "ANDI", code: "I"},
+    "STR" : {name: "STR", code: "M"}
   }
 };
 
@@ -32,7 +33,7 @@ export default class AssemblyLanguageInstructions{
   }
 
   getMethodType(methodName){
-    let method = MethodEnum.properties[methodName.toUpperCase()];
+    let method = MethodEnum.methods[methodName.toUpperCase()];
     if (method == undefined) {
       return "X";
     }

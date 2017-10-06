@@ -12,27 +12,32 @@ export default class DataDisplay extends React.Component {
     this.state ={
       opRegs : this.props.opRegs,
       utilRegs : this.props.utilRegs,
+      memoryOps : this.props.memoryOps
 
     }
   }
   render(){
+
     return(
       <div>
-      <Row>
+
+      <div>
       <Center>
         <h3> Registers </h3>
       </Center>
-      </Row>
-      <Row>
-        <RegisterDisplay utilRegs = {this.state.utilRegs} opRegs = {this.state.opRegs} />
-      </Row>
-      <p>
-      </p>
-      <Row>
-        <Center>
-            <MemoryDisplay/>
-        </Center>
-      </Row>
+      </div>
+      <div>
+        <RegisterDisplay utilRegs = {this.state.utilRegs} memoryOps = {this.state.memoryOps} opRegs = {this.state.opRegs} />
+      </div>
+      <center>
+        <h3> Memory Display </h3> 
+      </center>
+      <div>
+            <MemoryDisplay
+                memoryOps = {this.state.memoryOps}
+            />
+      </div>
+
       </div>
     )
   }
