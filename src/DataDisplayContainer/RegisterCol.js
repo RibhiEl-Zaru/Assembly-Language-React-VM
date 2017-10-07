@@ -19,16 +19,16 @@ export default class RegisterCol extends React.Component {
   render(){
     return(
       <div>
-
-        <Grid>
         {this.state.registers.map((register, index) => (
+          <center>
           <Register
               key = {index}
               name = {register.name}
               value = {register.value}
+              width = "200px"
             />
+        </center>
         ))}
-        </Grid>
       </div>
     )
   }

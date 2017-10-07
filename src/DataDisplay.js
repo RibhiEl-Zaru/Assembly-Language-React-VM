@@ -19,24 +19,26 @@ export default class DataDisplay extends React.Component {
   render(){
 
     return(
-      <div>
+      <div id = "parent">
 
-      <div>
-      <Center>
-        <h3> Registers </h3>
-      </Center>
-      </div>
-      <div>
-        <RegisterDisplay utilRegs = {this.state.utilRegs} memoryOps = {this.state.memoryOps} opRegs = {this.state.opRegs} />
-      </div>
-      <center>
-        <h3> Memory Display </h3> 
-      </center>
-      <div>
-            <MemoryDisplay
-                memoryOps = {this.state.memoryOps}
-            />
-      </div>
+        <div id = "Registers">
+        <Center>
+          <h3> Registers </h3>
+        </Center>
+        <Center>
+
+          <RegisterDisplay utilRegs = {this.state.utilRegs} memoryOps = {this.state.memoryOps} opRegs = {this.state.opRegs} />
+
+        </Center>
+        </div>
+        <center>
+          <h3> Memory Display </h3>
+        </center>
+        <div>
+              <MemoryDisplay
+                  memoryOps = {this.state.memoryOps}
+              />
+        </div>
 
       </div>
     )

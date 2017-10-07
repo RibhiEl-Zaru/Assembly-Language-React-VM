@@ -5,6 +5,23 @@ import DataRow from "./DataRow.js"
 
 import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
 
+import './datatables.css';
+
+const $ = require('jquery');
+
+const columns = [
+    {
+        title: 'Name',
+        width: 120,
+        data: 'name'
+    },
+    {
+        title: 'Nickname',
+        width: 180,
+        data: 'nickname'
+    },
+];
+
 export default class MemoryDisplay extends React.Component {
   constructor(props){
     super(props)
@@ -14,24 +31,59 @@ export default class MemoryDisplay extends React.Component {
 
     }
   }
-  render(){
-    return(
-      <div>
-      <div>
-        <Grid>
-          {this.state.memoryOps.map((memOp, index) => (
-            <div>
-            
-            <DataRow
-              instruction = {memOp.instruction}
-              address = {memOp.address}
-              value = {memOp.value}
-            />
-            </div>
-          ))}
-        </Grid>
-      </div>
-      </div>
-    )
-  }
+  componentDidMount() {
+       $(this.refs.main).DataTable({
+          dom: '<"data-table-wrapper"t>',
+          data: this.props.names,
+          columns,
+          ordering: false
+       });
+   }
+   componentWillUnmount(){
+      $('.data-table-wrapper')
+      .find('table')
+      .DataTable()
+      .destroy(true);
+   }
+   shouldComponentUpdate() {
+       return false;
+   }
+
+
+   render() {
+       return (
+
+         {this.state.memoryOps.map((memOp, index) => (
+             <center>
+             <DataRow
+               instruction = {memOp.instruction}
+               address = {memOp.address}
+               value = {memOp.value}
+             />
+             </center>
+         ))}
+
+    );
+   }
+
 }
+
+
+/*
+<div>
+    <table id="example" class="display" cellspacing="0" width="100%" />
+
+    <thead>
+<tr>
+    <th>Name</th>
+    <th>Position</th>
+    <th>Office</th>
+    <th>Age</th>
+    <th>Start date</th>
+    <th>Salary</th>
+</tr>
+</thead>
+
+</div>
+
+*/

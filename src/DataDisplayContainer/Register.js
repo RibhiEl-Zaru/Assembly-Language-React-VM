@@ -16,22 +16,13 @@ export default class Register extends React.Component {
 
   render(){
     return(
-
-       <h3>
-       <Label>
+       <h4>
+       <label className = "register">
           {this.props.name} :  {this.props.value}
-         </Label>
-      </h3>
+         </label>
+       </h4>
+
 
     )
   }
 }
-
-/*
-<Label
-
-  >
-   {this.props.name} :  {this.props.value}
-  </Label>
-
-*/

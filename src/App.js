@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import styles from './App.css';
 // import "bootstrap/dist/css/bootstrap.css";
 import "bootswatch/journal/bootstrap.css";
 import { Label, Navbar, NavItem, Nav, Grid, Row, Col } from "react-bootstrap";
@@ -10,11 +10,12 @@ import CodeDisplay from "./CodeDisplay.js";
 import AssemblyLanguageInstructions from "./AssemblyLanguageInstructions.js";
 import DataDisplay from "./DataDisplay.js";
 import FileUploadButton from "./CodeDisplayContents/FileUploadButton.js"
+import Header from "./Header.js"
 
 let successfulCompilationNoti = "Compilation Successful!";
 let OP_REGS = [
   // May have to explicitly declare these as registers.
-  { name: "R0", value: 0 },
+  { name: "R0", value: 0},
   { name: "R1", value: 0 },
   { name: "R2", value: 0 },
   { name: "R3", value: 0 },
@@ -60,6 +61,40 @@ class App extends React.Component {
 
   }
 
+
+
+    render() {
+      return (
+      <div>
+        <Header/>
+              <Grid>
+                <Row>
+                  <Col md={8} sm={8} lg = {8}>
+                    <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
+                                 timer = {this.state.timer}
+                                 timerChange = {this.setTimer.bind(this)}
+                                 compileCode = {this.compileCode.bind(this)}
+                                 changeCode = {this.handleChange.bind(this)}
+                                 changeNoti = {this.setNotification.bind(this)}
+                                 playCode = {this.executeCode.bind(this)}
+                                 code = {this.state.code}
+                                 notification = {this.state.notification}
+                                />
+                  </Col>
+                  <Col md={4} sm={4} lg = {4}>
+                    <DataDisplay
+                        opRegs = {this.state.operationRegs}
+                        utilRegs = {this.state.utilRegs}
+                        memoryOps = {this.state.memoryOps}
+                    />
+                  </Col>
+                </Row>
+              </Grid>
+      </div>
+
+      );
+    }
+
   myTimer( e){
 
 
@@ -93,42 +128,6 @@ class App extends React.Component {
     this.setState({timer});
   }
 
-  render() {
-    return (
-      <div>
-              <Navbar>
-                <Navbar.Header>
-                  <Navbar.Brand>
-                    CS101 Honors Web App
-                  </Navbar.Brand>
-                </Navbar.Header>
-              </Navbar>
-              <Grid>
-                <Row>
-                  <Col md={8} sm={8} lg = {8}>
-                    <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
-                                 timer = {this.state.timer}
-                                 timerChange = {this.setTimer.bind(this)}
-                                 compileCode = {this.compileCode.bind(this)}
-                                 changeCode = {this.handleChange.bind(this)}
-                                 changeNoti = {this.setNotification.bind(this)}
-                                 playCode = {this.executeCode.bind(this)}
-                                 code = {this.state.code}
-                                 notification = {this.state.notification}
-                                />
-                  </Col>
-                  <Col md={4} sm={4} lg = {4}>
-                    <DataDisplay
-                        opRegs = {this.state.operationRegs}
-                        utilRegs = {this.state.utilRegs}
-                        memoryOps = {this.state.memoryOps}
-                    />
-                  </Col>
-                </Row>
-              </Grid>
-      </div>
-    );
-  }
 
 
   executeCode(){
@@ -400,6 +399,35 @@ compileCode(){
 
 }
 
+/*
 
+<div>
+  <Header/>
+        <Grid>
+          <Row>
+            <Col md={8} sm={8} lg = {8}>
+              <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
+                           timer = {this.state.timer}
+                           timerChange = {this.setTimer.bind(this)}
+                           compileCode = {this.compileCode.bind(this)}
+                           changeCode = {this.handleChange.bind(this)}
+                           changeNoti = {this.setNotification.bind(this)}
+                           playCode = {this.executeCode.bind(this)}
+                           code = {this.state.code}
+                           notification = {this.state.notification}
+                          />
+            </Col>
+            <Col md={4} sm={4} lg = {4}>
+              <DataDisplay
+                  opRegs = {this.state.operationRegs}
+                  utilRegs = {this.state.utilRegs}
+                  memoryOps = {this.state.memoryOps}
+              />
+            </Col>
+          </Row>
+        </Grid>
+<div>
+
+*/
 
 export default App;

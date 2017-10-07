@@ -46,7 +46,7 @@ export default class CodeDisplay extends React.Component {
            <Center> {this.props.notification}  </Center>
       </div>
 
-      <div>
+      <div id = "ControlConsole">
           <Center>
 
               <ControlConsole

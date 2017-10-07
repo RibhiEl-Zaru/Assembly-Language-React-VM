@@ -5,6 +5,8 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "bootswatch": "^3.3.7",
+    "dynatable": "0.0.5",
+    "jquery": "^3.2.1",
     "nw-react-slider": "^2.0.1",
     "react": "^15.5.4",
     "react-ace": "^5.2.0",

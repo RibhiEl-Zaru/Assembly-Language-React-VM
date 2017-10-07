@@ -18,16 +18,15 @@ export default class DataRow extends React.Component {
   render(){
     return(
       <div>
-      <row>
-      <h3>
+
+      <h4>
+        <label className = "instruction">
+          {this.state.instruction}  &nbsp;  {this.state.address} &nbsp;  {this.state.value}
+        </label>
 
 
-        <Label>{this.state.instruction}</Label>
-        <Label>{this.state.address}</Label>
-        <Label>{this.state.value}</Label>
-      </h3>
+      </h4>
 
-      </row>
       </div>
     )
   }
