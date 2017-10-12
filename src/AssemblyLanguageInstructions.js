@@ -53,7 +53,7 @@ var MethodEnum = {
   LOD: "LOD", // LOD Rd, offset(Rs): let base be the contents of register Rs. Then this loads RAM[base + offset] into register Rd.
   LI: "Li", // Li Rd, number: loads number into register Rd.
   STO: "STO", // STO Rs, offset(Rd): let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory.
-  MOV: "MOV"  // MOV Rd, Rs: copies the contents of register Rs into register Rd.
+  MOV: "MOV",  // MOV Rd, Rs: copies the contents of register Rs into register Rd.
 
 
   ADD: "ADD",  //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
@@ -67,25 +67,44 @@ var MethodEnum = {
   BEQ: "BEQ", // BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
   BGT: "BGT", // BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW <= 0, this instruction does nothing.
   JMP: "JMP", // JMP disp: causes the new value of PC to be the sum PC + disp.
+  HLT: "HLT", // causes the svm machine to print the contents of registers PC, PSW, RA, R0, R1, R2 and R3. It then stops, returning ().
 
 
 
 
   methods: {
 
+    /*
+    The following Operations are Memory based operations.
+
+    Input: Rd, Offset, Rs
+    */
     "LOD": {name: "LOD", code: "M"},
-    "LI": {name: "LI", code: "M"},
     "STO": {name: "STO", code: "M"},
-    "MOV": {name: "MOV", code: "R"},
+
+    /*
+    The following are Transfer based operations.
+
+    Input: varies for the two
+    */
+    "LI":  {name: "LI",  code: "T"},
+    "MOV": {name: "MOV", code: "T"},
+
     "ADD": {name: "ADD", code: "R"},
     "SUB": {name: "SUB", code: "R"},
     "MUL": {name: "MUL", code: "R"},
-    "CMP": {name: "CMP", code: "M"},
-    "JSR": {name: "JSR", code: "M"},
-    "R": {name: "R", code: "M"},
-    "BLT": {name: "BLT", code: "BLT"},
-    "BEQ": {name: "BEQ", code: "M"},
-    "JMP": {name: "JMP", code: "M"},
+    "DIV": {name: "DIV", code: "R"},
+
+    "BLT": {name: "BLT", code: "B"},
+    "BEQ": {name: "BEQ", code: "B"},
+    "BGT": {name: "BGT", code: "B"},
+    "JMP": {name: "JMP", code: "B"},
+    "JSR": {name: "JSR", code: "B"},
+
+    "R"  : {name: "R",   code: "E"},
+    "HLT": {name: "HLT", code: "E"},
+    "CMP": {name: "CMP", code: "E"},
+
   }
 };
 
@@ -108,48 +127,185 @@ export default class AssemblyLanguageInstructions{
 
   }
 
-  executeInstruction(methodName, reg1, reg2, regDest, immediate, address){
+  executeInstruction(methodName, Rs, Rd, Rt, number, offset, disp){
     methodName = methodName.toUpperCase();
-    if(methodName == "ADD"){
-      console.log("ADD");
-      this.ADD(reg1, reg2, regDest);
+    if(methodName == "LOD"){
+      this.LOD(Rd, offset, Rs);
     }
-    else if (methodName == " ") {
+    else if (methodName == "LI") {
+
+      this.LOD(Rd, number);
+
+    }
+    else if (methodName == "STO") {
+
+      this.STO(Rs, offset, Rd);
+
+    }
+    else if (methodName == "MOV") {
+
+      this.MOV(Rd,Rs);
+
+    }
+    else if (methodName == "ADD") {
+
+      this.ADD(Rd, Rs, Rt);
+
+    }
+    else if (methodName == "SUB") {
+
+      this.SUB(Rd, Rs, Rt);
+
+    }
+    else if (methodName == "MUL") {
+
+      this.MUL(Rd, Rs, Rt);
+
+    }
+    else if (methodName == "DIV") {
+
+      this.DIV(Rd, Rs, Rt);
+
+    }
+    else if (methodName == "CMP") {
+
+      this.CMP(Rs, Rt);
+
+    }
+    else if (methodName == "JSR") {
+
+      this.JSR(disp);
+
+    }
+    else if (methodName == "R") {
+
+      this.R();
+
+    }
+    else if (methodName == "BLT") {
+
+      this.BLT(disp);
+
+    }
+    else if (methodName == "BGT") {
+
+      this.BGT(disp);
+
+    }
+    else if (methodName == "BEQ") {
+
+      this.BEQ(disp);
+
+    }
+    else if (methodName == "JMP") {
+
+      this.JMP(disp);
 
     }
 
-  }
-
-  /*
-
-    LOD: "LOD", // LOD Rd, offset(Rs): let base be the contents of register Rs. Then this loads RAM[base + offset] into register Rd.
-    LI: "Li", // Li Rd, number: loads number into register Rd.
-    STO: "STO", // STO Rs, offset(Rd): let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory.
-    MOV: "MOV"  // MOV Rd, Rs: copies the contents of register Rs into register Rd.
 
 
-    ADD: "ADD",  //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
-    SUB: "SUB",  //SUB Rd, Rs, Rt: subtracts the contents of register Rt from Rs and stores the difference in register Rd.
-    MUL: "MUL",  // MUL Rd, Rs, Rt: multiplies the contents of register Rt from Rs and stores the product in register Rd.
-    DIV: "DIV", // DIV Rd, Rs, Rt: divides the contents of register Rs by Rt and stores the integer quotient in register Rd.
-    CMP: "CMP",
-    JSR: "JS", // JSR disp: sets RA = PC and then PC = PC + disp.
-    R  : "R", // R: sets PC = RA.
-    BLT: "BLT", // BLT disp: if PSW is negative, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW >= 0, this instruction does nothing.
-    BEQ: "BEQ", // BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
-    BGT: "BGT", // BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW <= 0, this instruction does nothing.
-    JMP: "JMP", // JMP disp: causes the new value of PC to be the sum PC + disp.
-  */
-
-  STORE(value, regDest){
-    regDest.value = value;
   }
 
 
-  SUB(){
+
+  LOD(Rd, offset, Rs){ // LOD Rd, offset(Rs): let base be the contents of register Rs. Then this loads RAM[base + offset] into register Rd.
+    const base = Rs.value;
+
+    const dest = base + offset
+
+    const val = 0; // Val is RAM[base + offset]
+    Rs.value = val;
+
+  }
+  LI(Rd, number){ // Li Rd, number: loads number into register Rd.
+    Rd.value = number;
+  }
+
+  STORE(Rd, offset, Rs){ // STO Rs, offset(Rd): let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory.
+    const  base = Rd.value;
+    const dest = base + offset;
+    const val = Rs.value;
+
+    const mem = val; // Mem = location base + offset in memory
+  }
+
+  MOV(Rd, Rs){   // MOV Rd, Rs: copies the contents of register Rs into register Rd.
+    Rd.value = Rs.value;
+  }
+
+
+  ADD(Rd, Rs, Rt){ //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
+          const x = Rs.value;
+          const y = Rt.value;
+          const newVal = x + y;
+          Rd.value = newVal;
+          console.log(newVal);
+    }
+
+
+  SUB(Rd, Rs, Rt){    //SUB Rd, Rs, Rt: subtracts the contents of register Rt from Rs and stores the difference in register Rd.
+
+    const x = Rs.value;
+    const y = Rt.value;
+    const newVal = x - y;
+    Rd.value = newVal;
+    console.log(newVal);
+  }
+
+  MUL(Rd, Rs, Rt){    // MUL Rd, Rs, Rt: multiplies the contents of register Rt from Rs and stores the product in register Rd.
+
+    const x = Rs.value;
+    const y = Rt.value;
+    const newVal = x * y;
+    Rd.value = newVal;
+    console.log(newVal);
+  }
+
+  DIV(Rd, Rs, Rt){    // DIV Rd, Rs, Rt: divides the contents of register Rs by Rt and stores the integer quotient in register Rd.
+
+    const x = Rs.value;
+    const y = Rt.value;
+    const newVal = x / y;
+    Rd.value = newVal;
+    console.log(newVal);
+  }
+
+  CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs == Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
+    //Get PSW
+
+    const val = RS.value - RT.value;
+
+    // PSW.value = val;
+  }
+
+  JSR(disp){  // JSR disp: sets RA = PC and then PC = PC + disp.
 
   }
 
+  R(){ // R: sets PC = RA.
+
+  }
+
+  BLT(disp){ // BLT disp: if PSW is negative, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW >= 0, this instruction does nothing.
+    //Get PSW
+
+  }
+
+
+
+  BEQ(disp){ // BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
+      //Get PSW
+
+  }
+
+  BGT(disp){ // BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW <= 0, this instruction does nothing.
+      //Get PSW
+
+  }
+  JMP(disp){  // JMP disp: causes the new value of PC to be the sum PC + disp.
+
+  }
 
 
   call(){

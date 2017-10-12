@@ -22,20 +22,25 @@ let OP_REGS = [
 ];
 
 let UTIL_REGS = [
-  { name: "PC", value: "x0" },
-  { name: "PSW", value: 0 },
-  { name: "IR", value: 0 },
+  { name: "PC", value: "x0"  },
+  { name: "PSW", value: 0    },
+  { name: "RA", value: 0     },
+  { name: "RZ", value: 0     },
 
 ];
 
 let MEMORY_OPS = [{instruction: "STR RO R1", address: "x04", value: 5}, {instruction: "STR RO R1", address: "x04", value: 5} ];
 
 var InstrTypes = {
-  NONE: "X",
-  REGISTER: "R",
-  IMMEDIATE: "I",
-  MEMORY: "M",
-  JUMP: "J",
+  NONE:      "X",
+  REGISTER:  "R",
+  IMMTRANSFER:  "TI",
+  REGTRANSFER:  "TR",
+  MEMORY:    "M",
+  BREAK:     "B",
+  EMPTY:     "E",
+
+
 
 };
 
@@ -223,16 +228,31 @@ compileCode(){
             }), 3000);
             break;
         }
-        if(opType == InstrTypes.IMMEDIATE){
-          /**
-            Process an I instruction
-          */
+        else if (opType == InstrTypes.MEMORY) {
 
-          let rs = "";
           let rd = "";
-          let im = "";
+          let offset = "";
+          let rs = "";
 
           let regExists = false;
+
+          e = e.substring(e.indexOf(" ")+1, e.length);
+          rd = e.substring(0, e.indexOf(" "));
+
+          regExists = this.testForRegisterPresence(rd);
+
+          if(!regExists /*The Value Register does not exist*/){
+
+            this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
+            break;
+          }
+
+          e = e.substring(e.indexOf(" ")+1, e.length);
+          offset = e.substring(0, e.indexOf(" "));
+
 
           e = e.substring(e.indexOf(" ")+1, e.length);
           rs = e.substring(0, e.indexOf(" "));
@@ -246,6 +266,25 @@ compileCode(){
             }), 3000);
             break;
           }
+
+
+          e = e.substring(e.indexOf(" ")+1, e.length);
+          // Trim out all the spaces and new lines.
+          e = e.trim();
+
+          instructions.push([op, rs, rd, null, null , offset, null]);
+
+        }
+        else if(opType == InstrTypes.IMMTRANSFER){
+          /**
+            Process a TI instruction
+          */
+
+          let rd = "";
+          let number = "";
+
+          let regExists = false;
+
 
           e = e.substring(e.indexOf(" ")+1, e.length);
           rd = e.substring(0, e.indexOf(" "));
@@ -262,105 +301,148 @@ compileCode(){
           }
 
           e = e.substring(e.indexOf(" ")+1, e.length);
-          im = e.substring(0, e.indexOf(" "));
+          number = e.substring(0, e.indexOf(" "));
 
           e = e.substring(e.indexOf(" ")+1, e.length);
           // Trim out all the spaces and new lines.
           e = e.trim();
 
-          instructions.push([op, rs, null, rd , im, null]);
-          this.setNotification(successfulCompilationNoti);
+          instructions.push([op, rd, null, null,  number , null, null]);
+
         }
-        else if(opType == InstrTypes.REGISTER){
+        else if(opType == InstrTypes.REGTRANSFER){
 
-            /**
-              Process an R instruction
-            */
+          /**
+            Process a TI instruction
+          */
 
-            let rs = "";
-            let rt = "";
-            let rd = "";
+          let rd = "";
+          let rs = "";
 
-            let regExists = false;
+          let regExists = false;
 
-            e = e.substring(e.indexOf(" ")+1, e.length);
-            rs = e.substring(0, e.indexOf(" "));
 
-            regExists = this.testForRegisterPresence(rs);
+          e = e.substring(e.indexOf(" ")+1, e.length);
+          rd = e.substring(0, e.indexOf(" "));
 
-            if(!regExists /*The Source Register does not exist*/){
-              this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
-              setTimeout((function(){
-                home.setNotification("")
-              }), 3000);
-              break;
-            }
+          regExists = this.testForRegisterPresence(rd);
+          if(!regExists /*The Value Register does not exist*/){
 
-            e = e.substring(e.indexOf(" ")+1, e.length);
-            rt = e.substring(0, e.indexOf(" "));
-
-            regExists = this.testForRegisterPresence(rt);
-            if(!regExists /*The Value Register does not exist*/){
-
-              this.setNotification("Value Register in instruction " + (i+1) + " does not exist");
-              setTimeout((function(){
-                home.setNotification("")
-              }), 3000);
-              break;
-
-            }
-            e = e.substring(e.indexOf(" ")+1, e.length);
-            rd = e.substring(0, e.indexOf(" "));
-
-            regExists = this.testForRegisterPresence(rd);
-            if(!regExists /*The Value Register does not exist*/){
-
-              this.setNotification("Destination Register in instruction " + (i+1) + " does not exist");
-              setTimeout((function(){
-                home.setNotification("")
-              }), 3000);
-              break;
-
-            }
-
-            e = e.substring(e.indexOf(" ")+1, e.length);
-            e = e.trim();
-
-            instructions.push([op, rs, rt, rd, null, null]);
-
-            this.setNotification(successfulCompilationNoti);
+            this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
             setTimeout((function(){
               home.setNotification("")
             }), 3000);
+            break;
+
+          }
+          e = e.substring(e.indexOf(" ")+1, e.length);
+          rs = e.substring(0, e.indexOf(" "));
+
+          regExists = this.testForRegisterPresence(rs);
+
+          if(!regExists /*The Source Register does not exist*/){
+            this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
+            break;
+          }
+
+          e = e.substring(e.indexOf(" ")+1, e.length);
+          // Trim out all the spaces and new lines.
+          e = e.trim();
+
+          instructions.push([op, rs, rd, null, null , null, null]);
+
       }
-      else if (opType == InstrTypes.JUMP) {
+      else if (opType == InstrTypes.REGISTER) {
+
+        let rd = "";
+        let rs = "";
+        let rt = "";
+
+        let regExists = false;
+
+
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        rd = e.substring(0, e.indexOf(" "));
+
+        regExists = this.testForRegisterPresence(rd);
+        if(!regExists /*The Value Register does not exist*/){
+
+          this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+          setTimeout((function(){
+            home.setNotification("")
+          }), 3000);
+          break;
+
+        }
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        rs = e.substring(0, e.indexOf(" "));
+
+        regExists = this.testForRegisterPresence(rs);
+
+        if(!regExists /*The Source Register does not exist*/){
+          this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
+          setTimeout((function(){
+            home.setNotification("")
+          }), 3000);
+          break;
+        }
+
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        rt = e.substring(0, e.indexOf(" "));
+
+        regExists = this.testForRegisterPresence(rt);
+
+        if(!regExists /*The Source Register does not exist*/){
+          this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
+          setTimeout((function(){
+            home.setNotification("")
+          }), 3000);
+          break;
+        }
+
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        // Trim out all the spaces and new lines.
+        e = e.trim();
+
+        instructions.push([op, rs, rd, rt, null , null, null]);
+
+      }
+      else if (opType == InstrTypes.BREAK) {
             /**
               Process a Jump instruction
             */
 
-            let address = "";
+            let disp = "";
 
             e = e.substring(e.indexOf(" ")+1, e.length);
-            address = e.substring(0, e.indexOf(" "));
+            disp = e.substring(0, e.indexOf(" "));
 
             e = e.substring(e.indexOf(" ")+1, e.length);
             e = e.trim();
 
-            instructions.push([op, null, null, null, null, address]);
+            instructions.push([op, null, null, null, null , null, disp]);
 
-            this.setNotification(successfulCompilationNoti);
-            setTimeout((function(){
-              home.setNotification("")
-            }), 3000);
+
       }
-      else if (opType == InstrTypes.MEMORY){
+      else if (opType == InstrTypes.EMPTY){
 
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        e = e.trim();
+
+        instructions.push([op, null, null, null, null , null, null]);
 
       }
 
 
     }
 
+    this.setNotification(successfulCompilationNoti);
+    setTimeout((function(){
+      home.setNotification("")
+    }), 3000);
 
   }
 

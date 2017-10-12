@@ -28,7 +28,6 @@ export default class MemoryDisplay extends React.Component {
 
     this.state ={
       memoryOps : this.props.memoryOps
-
     }
   }
   componentDidMount() {
@@ -49,21 +48,10 @@ export default class MemoryDisplay extends React.Component {
        return false;
    }
 
-
    render() {
        return (
-
-         {this.state.memoryOps.map((memOp, index) => (
-             <center>
-             <DataRow
-               instruction = {memOp.instruction}
-               address = {memOp.address}
-               value = {memOp.value}
-             />
-             </center>
-         ))}
-
-    );
+          <label> dkjhfaskjhdf </label>
+       )
    }
 
 }
