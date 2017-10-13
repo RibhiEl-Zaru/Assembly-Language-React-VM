@@ -2,8 +2,22 @@
   text-align: center;
 }
 
+
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: blue;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+
 .regDisplay {
-   border:1px solid red;
+   border:0px solid red;
    background-color: inherit;
    padding:10px;
    width:360px;
@@ -38,8 +52,14 @@
   height: 80px;
 }
 
-.App-header {
-  background-color: #222;
+.navbar-custom{
+
+    background-color: black;
+    border-color: black;
+}
+
+.header {
+  background-color: #9F9F9F;
   height: 150px;
   padding: 20px;
   color: white;
@@ -73,15 +93,33 @@
   color: #FFFFFF;
 }
 
+.papaBear{
+  background-color: white;
+}
+
+.navbar {
+    color: #FFFFFF;
+    background-color: #CC3333;
+}
+
+/* OR*/
+
+.nav {
+    color: #FFFFFF;
+    background-color: #CC3333;
+}
+
 .instruction {
-  border:1px solid black;
-  padding:5px;
-  width: 360px;
-  background-color: #FFFFFF;
+  border:2px solid black;
+  padding: 5px;
+  width: 300px;
+  background-color: #9F9F9F;
+  border-radius: 5px;
   word-wrap: break-word;
   font-weight: bold;
   font-family: sans-serif;
-  color: #9F9F9F;
+  text-align: left;
+  color: #FFFFFF;
 }
 
 .addr {

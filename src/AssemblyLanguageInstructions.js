@@ -87,13 +87,17 @@ var MethodEnum = {
 
     Input: varies for the two
     */
-    "LI":  {name: "LI",  code: "T"},
-    "MOV": {name: "MOV", code: "T"},
+    "LI":  {name: "LI",  code: "TI"},
+    "MOV": {name: "MOV", code: "TR"},
 
     "ADD": {name: "ADD", code: "R"},
     "SUB": {name: "SUB", code: "R"},
     "MUL": {name: "MUL", code: "R"},
     "DIV": {name: "DIV", code: "R"},
+
+
+    "CMP": {name: "CMP", code: "C"},
+
 
     "BLT": {name: "BLT", code: "B"},
     "BEQ": {name: "BEQ", code: "B"},
@@ -103,7 +107,6 @@ var MethodEnum = {
 
     "R"  : {name: "R",   code: "E"},
     "HLT": {name: "HLT", code: "E"},
-    "CMP": {name: "CMP", code: "E"},
 
   }
 };
@@ -111,13 +114,14 @@ var MethodEnum = {
 
 
 
-export default class AssemblyLanguageInstructions{
-  constructor(){
-
+export default class AssemblyLanguageInstructions extends React.Component {
+  constructor(props){
+    super(props);
   }
 
   getMethodType(methodName){
     let method = MethodEnum.methods[methodName.toUpperCase()];
+    console.log(method);
     if (method == undefined) {
       return "X";
     }
@@ -127,14 +131,15 @@ export default class AssemblyLanguageInstructions{
 
   }
 
-  executeInstruction(methodName, Rs, Rd, Rt, number, offset, disp){
+  executeInstruction(methodName, Rd , Rs, Rt, number, offset, disp){
     methodName = methodName.toUpperCase();
+    console.log(methodName);
     if(methodName == "LOD"){
       this.LOD(Rd, offset, Rs);
     }
     else if (methodName == "LI") {
 
-      this.LOD(Rd, number);
+      this.LI(Rd, number);
 
     }
     else if (methodName == "STO") {
@@ -219,7 +224,9 @@ export default class AssemblyLanguageInstructions{
 
   }
   LI(Rd, number){ // Li Rd, number: loads number into register Rd.
-    Rd.value = number;
+    const num = number;
+    Rd.value = num;
+    console.log(Rd);
   }
 
   STORE(Rd, offset, Rs){ // STO Rs, offset(Rd): let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory.
@@ -274,9 +281,15 @@ export default class AssemblyLanguageInstructions{
   CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs == Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
     //Get PSW
 
-    const val = RS.value - RT.value;
-
-    // PSW.value = val;
+    const toCheck = RS.value - RT.value;
+    let val = 0;
+    if(toCheck > 1){
+      val = 1;
+    }
+    else if(toCheck < 1){
+      val = -1;
+    }
+    this.props[1].value = val;
   }
 
   JSR(disp){  // JSR disp: sets RA = PC and then PC = PC + disp.

@@ -22,10 +22,10 @@ let OP_REGS = [
 ];
 
 let UTIL_REGS = [
-  { name: "PC", value: "x0"  },
-  { name: "PSW", value: 0    },
-  { name: "RA", value: 0     },
-  { name: "RZ", value: 0     },
+  { name: "PC", value: "x0"  }, // Holds the address in RAM of the next instruction to be executed
+  { name: "PSW", value: 0    }, //the PSW (or program status word) register holds information about the outcomes of comparisons, etc
+  { name: "RA", value: 0     }, // the RA (or return address) register holds the address of the instruction to return to after a JSR.
+  { name: "RZ", value: 0     }, // the Zero register holds the constant 0.
 
 ];
 
@@ -39,6 +39,7 @@ var InstrTypes = {
   MEMORY:    "M",
   BREAK:     "B",
   EMPTY:     "E",
+  COMPARE:    "C",
 
 
 
@@ -48,7 +49,7 @@ var InstrTypes = {
 let compiledCode = [];
 let instructions = [];
 let execTime = 1000;
-let armInstrs = new AssemblyLanguageInstructions();
+let armInstrs = new AssemblyLanguageInstructions(UTIL_REGS);
 
 class App extends React.Component {
   constructor(){
@@ -70,7 +71,7 @@ class App extends React.Component {
 
     render() {
       return (
-      <div>
+      <div className = "papaBear">
         <Header/>
               <Grid>
                 <Row>
@@ -136,51 +137,61 @@ class App extends React.Component {
 
 
   executeCode(){
+    console.log("Instrs" , instructions);
+    //executeInstruction(methodName, Rs, Rd, Rt, number, offset, disp)
     for (var i = 0; i < instructions.length; i ++){
 
       let z = i+1;
 
       let instruct = instructions[i];
+      console.log(instruct);
 
       let instr = instruct[0];
-      let reg1Info = instruct[1];
-      let reg2Info = instruct[2];
-      let regDestInfo = instruct[3];
-      let immediateInfo = instruct[4];
-      let addressInfo = instruct[5]
+      let rdInfo = instruct[1];
+      let rsInfo = instruct[2];
 
-      let reg1 = null;
-      let reg2 = null;
-      let regDest = null;
-      let immediate = null;
-      let address = null;
+      let rtInfo = instruct[3];
+      let immediateInfo = instruct[4];
+      let offsetInfo = instruct[5];
+      let dispInfo = instruct[6];
+
+      let rs = null;
+      let rd = null;
+      let rt = null;
+      let number = null;
+      let offset = null;
+      let disp = null;
 
       var home = this;
 
+      console.log(rdInfo);
       setTimeout((function(){
-         if(reg1Info != null){
-           reg1 = OP_REGS[parseInt(reg1Info.substr(-1))];
+         if(rsInfo != null){
+           rs = OP_REGS[parseInt(rsInfo.substr(-1))];
          }
 
-         if(reg2Info != null){
-           reg2 = OP_REGS[parseInt(reg2Info.substr(-1))];
+         if(rdInfo != null){
+           rd = OP_REGS[parseInt(rdInfo.substr(-1))];
          }
 
-         if(regDestInfo != null){
-           regDest = OP_REGS[parseInt(regDestInfo.substr(-1))];
+         if(rtInfo != null){
+           rt = OP_REGS[parseInt(rtInfo.substr(-1))];
          }
          if(immediateInfo != null){
-           immediate = parseInt(immediateInfo);
+           number = parseInt(immediateInfo);
          }
 
-         if(addressInfo != null){
-           address = parseInt(address);
+         if(offsetInfo != null){
+           offset = parseInt(offsetInfo);
+         }
+         if(dispInfo != null){
+           disp = parseInt(dispInfo);
          }
 
-         // console.log("Reg1:",reg1); console.log("Reg2:",reg2); console.log("RegDest:",regDest); console.log("Immeidate:",immediate);
 
-         armInstrs.executeInstruction(instr, reg1, reg2, regDest, immediate, address);
-         armInstrs.STORE(z, UTIL_REGS[2])
+         console.log(rd);
+         armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
+         //Increment PC
          home.setState({operationRegs : OP_REGS,  currLine : z-1});
 
 
@@ -194,6 +205,7 @@ class App extends React.Component {
 compileCode(){
       this.resetRegisters()
       this.setState({operationRegs : OP_REGS});
+
 
       instructions = []; // Reset instructions.
 
@@ -220,6 +232,7 @@ compileCode(){
 
         //Get the Operation and determine if it's an R, I or J instruction.
         let opType = armInstrs.getMethodType(op);
+        console.log("type" , opType);
 
         if(opType == InstrTypes.NONE){
             this.setNotification("Operation in line " + (i+1) + " is not found");
@@ -272,13 +285,14 @@ compileCode(){
           // Trim out all the spaces and new lines.
           e = e.trim();
 
-          instructions.push([op, rs, rd, null, null , offset, null]);
+          instructions.push([op, rd, rs,  null, null , offset, null]);
 
         }
         else if(opType == InstrTypes.IMMTRANSFER){
           /**
             Process a TI instruction
           */
+          console.log("TI");
 
           let rd = "";
           let number = "";
@@ -289,6 +303,7 @@ compileCode(){
           e = e.substring(e.indexOf(" ")+1, e.length);
           rd = e.substring(0, e.indexOf(" "));
 
+          console.log("dfsadf");
           regExists = this.testForRegisterPresence(rd);
           if(!regExists /*The Value Register does not exist*/){
 
@@ -299,6 +314,7 @@ compileCode(){
             break;
 
           }
+                    console.log("broke");
 
           e = e.substring(e.indexOf(" ")+1, e.length);
           number = e.substring(0, e.indexOf(" "));
@@ -306,8 +322,9 @@ compileCode(){
           e = e.substring(e.indexOf(" ")+1, e.length);
           // Trim out all the spaces and new lines.
           e = e.trim();
-
+console.log("dslfkhjsadlj");
           instructions.push([op, rd, null, null,  number , null, null]);
+          console.log(instructions);
 
         }
         else if(opType == InstrTypes.REGTRANSFER){
@@ -407,7 +424,7 @@ compileCode(){
         // Trim out all the spaces and new lines.
         e = e.trim();
 
-        instructions.push([op, rs, rd, rt, null , null, null]);
+        instructions.push([op, rd, rs, rt, null , null, null]);
 
       }
       else if (opType == InstrTypes.BREAK) {
@@ -436,28 +453,67 @@ compileCode(){
 
       }
 
+      else if (opType == InstrTypes.COMPARE){
+        let rs = "";
+        let rt = "";
 
+        let regExists = false;
+
+
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        rs = e.substring(0, e.indexOf(" "));
+
+        regExists = this.testForRegisterPresence(rs);
+        if(!regExists /*The Value Register does not exist*/){
+
+          this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+          setTimeout((function(){
+            home.setNotification("")
+          }), 3000);
+          break;
+
+        }
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        rt = e.substring(0, e.indexOf(" "));
+
+        regExists = this.testForRegisterPresence(rt);
+
+        if(!regExists /*The Source Register does not exist*/){
+          this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
+          setTimeout((function(){
+            home.setNotification("")
+          }), 3000);
+          break;
+        }
+
+        e = e.substring(e.indexOf(" ")+1, e.length);
+        // Trim out all the spaces and new lines.
+        e = e.trim();
+
+        instructions.push([op, null, rs, rt, null , null, null]);
+      }
     }
 
     this.setNotification(successfulCompilationNoti);
+    var home = this;
     setTimeout((function(){
-      home.setNotification("")
+      home.setNotification("");
     }), 3000);
 
   }
 
   resetRegisters(){
       for (var i = 0; i < OP_REGS.length; i++){
-        armInstrs.STORE(0, OP_REGS[i]);
+        armInstrs.LI(UTIL_REGS[i], 0);
       }
 
       for (var i = 1; i < UTIL_REGS.length; i++){
-        armInstrs.STORE(0, UTIL_REGS[i]);
+        armInstrs.LI(UTIL_REGS[i], 0);
       }
   }
 
   testForRegisterPresence(reg){
-
+    console.log(reg);
     if (reg.length > 2){
       return false;
     }

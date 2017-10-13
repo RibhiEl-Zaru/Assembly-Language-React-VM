@@ -50,7 +50,18 @@ export default class MemoryDisplay extends React.Component {
 
    render() {
        return (
-          <label> dkjhfaskjhdf </label>
+         <div>
+           {this.state.memoryOps.map((op, index) => (
+             <center>
+             <DataRow
+                 instruction = {op.instruction}
+                 address = {op.op}
+                 value = {op.value}
+                 width = "200px"
+               />
+           </center>
+           ))}
+         </div>
        )
    }
 
