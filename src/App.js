@@ -29,7 +29,9 @@ let UTIL_REGS = [
 
 ];
 
-let MEMORY_OPS = [{instruction: "STR RO R1", address: "x04", value: 5}, {instruction: "STR RO R1", address: "x04", value: 5} ];
+let MEMORY_OPS = [];
+
+let MEMORY = new Map();
 
 var InstrTypes = {
   NONE:      "X",
@@ -49,7 +51,7 @@ var InstrTypes = {
 let compiledCode = [];
 let instructions = [];
 let execTime = 1000;
-let armInstrs = new AssemblyLanguageInstructions(UTIL_REGS);
+let armInstrs = new AssemblyLanguageInstructions({utilRegs: UTIL_REGS, memory: MEMORY, memOps: MEMORY_OPS});
 
 class App extends React.Component {
   constructor(){
@@ -62,6 +64,7 @@ class App extends React.Component {
       utilRegs : UTIL_REGS,
       memoryOps : MEMORY_OPS,
       currLine : 0,
+      pause     : false,
       timer : 3,
     }
 
@@ -70,6 +73,8 @@ class App extends React.Component {
 
 
     render() {
+
+      console.log("PAPA", this.state.memoryOps, " and : " , MEMORY);
       return (
       <div className = "papaBear">
         <Header/>
@@ -80,9 +85,11 @@ class App extends React.Component {
                                  timer = {this.state.timer}
                                  timerChange = {this.setTimer.bind(this)}
                                  compileCode = {this.compileCode.bind(this)}
+                                 testRun    = {this.playCode.bind(this)}
                                  changeCode = {this.handleChange.bind(this)}
                                  changeNoti = {this.setNotification.bind(this)}
                                  playCode = {this.executeCode.bind(this)}
+                                 stopCode = {this.setPause.bind(this)}
                                  code = {this.state.code}
                                  notification = {this.state.notification}
                                 />
@@ -133,18 +140,101 @@ class App extends React.Component {
   setTimer(timer){
     this.setState({timer});
   }
+  setPause(pause){
+    this.setState({pause});
+  }
+
+  playCode(){
+    this.resetRegisters();
+    this.resetMemory();
+    let PCVal = parseInt(UTIL_REGS[0].value.substring(1));
+    let loc = PCVal /4; //Divide by 4 to get the Array index, as PC increments by 4.
+
+    while(loc < instructions.length){
+      PCVal = parseInt(UTIL_REGS[0].value.substring(1));
+      loc = PCVal /4; //Divide by 4 to get the Array index, as PC increments by 4.
+      if(loc >= instructions.length){
+        break;
+      }
+    let home = this;
+    const toExecute = instructions[loc];
+    if (!this.state.pause) {
+
+      UTIL_REGS[0].value = "x" + (PCVal + 4);
+
+      home.executeLineOfCode(PCVal, toExecute);
+
+      console.log("Post Exec" , MEMORY_OPS);
+
+      home.setState({utilRegs : UTIL_REGS, memoryOps : MEMORY_OPS});
+      console.log(MEMORY_OPS);
 
 
+      }
+    }
+
+
+  }
+
+  executeLineOfCode(loc, instruct){
+        let z = loc+1;
+        let instr = instruct[0];
+        let rdInfo = instruct[1];
+        let rsInfo = instruct[2];
+
+        let rtInfo = instruct[3];
+        let immediateInfo = instruct[4];
+        let offsetInfo = instruct[5];
+        let dispInfo = instruct[6];
+
+        let rs = null;
+        let rd = null;
+        let rt = null;
+        let number = null;
+        let offset = null;
+        let disp = null;
+
+        var home = this;
+
+
+           if(rsInfo != null){
+             rs = OP_REGS[parseInt(rsInfo.substr(-1))];
+           }
+
+           if(rdInfo != null){
+             rd = OP_REGS[parseInt(rdInfo.substr(-1))];
+           }
+
+           if(rtInfo != null){
+             rt = OP_REGS[parseInt(rtInfo.substr(-1))];
+           }
+           if(immediateInfo != null){
+             number = parseInt(immediateInfo);
+           }
+
+           if(offsetInfo != null){
+             offset = parseInt(offsetInfo);
+           }
+           if(dispInfo != null){
+             disp = parseInt(dispInfo);
+           }
+
+
+           armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
+           //Increment PC
+           home.setState({operationRegs : OP_REGS});
+
+
+
+
+  }
 
   executeCode(){
-    console.log("Instrs" , instructions);
-    //executeInstruction(methodName, Rs, Rd, Rt, number, offset, disp)
     for (var i = 0; i < instructions.length; i ++){
 
       let z = i+1;
 
       let instruct = instructions[i];
-      console.log(instruct);
 
       let instr = instruct[0];
       let rdInfo = instruct[1];
@@ -164,7 +254,6 @@ class App extends React.Component {
 
       var home = this;
 
-      console.log(rdInfo);
       setTimeout((function(){
          if(rsInfo != null){
            rs = OP_REGS[parseInt(rsInfo.substr(-1))];
@@ -189,21 +278,22 @@ class App extends React.Component {
          }
 
 
-         console.log(rd);
          armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
          //Increment PC
          home.setState({operationRegs : OP_REGS,  currLine : z-1});
+         home.setState({})
 
 
-    }), execTime * this.state.timer * z);
+       }), execTime * this.state.timer * z);
 
 
 
     }
   }
 
-compileCode(){
-      this.resetRegisters()
+  compileCode(){
+      this.resetRegisters();
+      this.resetMemory();
       this.setState({operationRegs : OP_REGS});
 
 
@@ -232,7 +322,6 @@ compileCode(){
 
         //Get the Operation and determine if it's an R, I or J instruction.
         let opType = armInstrs.getMethodType(op);
-        console.log("type" , opType);
 
         if(opType == InstrTypes.NONE){
             this.setNotification("Operation in line " + (i+1) + " is not found");
@@ -292,7 +381,6 @@ compileCode(){
           /**
             Process a TI instruction
           */
-          console.log("TI");
 
           let rd = "";
           let number = "";
@@ -303,7 +391,6 @@ compileCode(){
           e = e.substring(e.indexOf(" ")+1, e.length);
           rd = e.substring(0, e.indexOf(" "));
 
-          console.log("dfsadf");
           regExists = this.testForRegisterPresence(rd);
           if(!regExists /*The Value Register does not exist*/){
 
@@ -314,7 +401,7 @@ compileCode(){
             break;
 
           }
-                    console.log("broke");
+
 
           e = e.substring(e.indexOf(" ")+1, e.length);
           number = e.substring(0, e.indexOf(" "));
@@ -322,9 +409,8 @@ compileCode(){
           e = e.substring(e.indexOf(" ")+1, e.length);
           // Trim out all the spaces and new lines.
           e = e.trim();
-console.log("dslfkhjsadlj");
           instructions.push([op, rd, null, null,  number , null, null]);
-          console.log(instructions);
+
 
         }
         else if(opType == InstrTypes.REGTRANSFER){
@@ -369,7 +455,7 @@ console.log("dslfkhjsadlj");
           // Trim out all the spaces and new lines.
           e = e.trim();
 
-          instructions.push([op, rs, rd, null, null , null, null]);
+          instructions.push([op, rd, rs, null, null , null, null]);
 
       }
       else if (opType == InstrTypes.REGISTER) {
@@ -493,7 +579,6 @@ console.log("dslfkhjsadlj");
         instructions.push([op, null, rs, rt, null , null, null]);
       }
     }
-
     this.setNotification(successfulCompilationNoti);
     var home = this;
     setTimeout((function(){
@@ -504,16 +589,36 @@ console.log("dslfkhjsadlj");
 
   resetRegisters(){
       for (var i = 0; i < OP_REGS.length; i++){
-        armInstrs.LI(UTIL_REGS[i], 0);
+        armInstrs.LI(OP_REGS[i], 0);
       }
 
-      for (var i = 1; i < UTIL_REGS.length; i++){
-        armInstrs.LI(UTIL_REGS[i], 0);
+      for (var j = 0; j < UTIL_REGS.length; j++){
+        if (j == 0){
+          UTIL_REGS[j].value = "x0";
+        }else{
+          armInstrs.LI(UTIL_REGS[j], 0);
+        }
+
       }
+
+      this.setState({operationRegs : OP_REGS, utilRegs : UTIL_REGS});
+
+  }
+
+  resetMemory(){
+    MEMORY.clear();
+    MEMORY_OPS.length = 0;
+    this.setState({MEMORY, MEMORY_OPS})
+
+    console.log("memReset");
+    console.log(this.state.MEMORY);
+    console.log("vs : ", MEMORY);
+    console.log(this.state.MEMORY_OPS);
+    console.log("vs : ", MEMORY_OPS);
+
   }
 
   testForRegisterPresence(reg){
-    console.log(reg);
     if (reg.length > 2){
       return false;
     }
@@ -537,35 +642,5 @@ console.log("dslfkhjsadlj");
 
 }
 
-/*
-
-<div>
-  <Header/>
-        <Grid>
-          <Row>
-            <Col md={8} sm={8} lg = {8}>
-              <CodeDisplay width = {this.state.codeDisplayWidth +"px"}
-                           timer = {this.state.timer}
-                           timerChange = {this.setTimer.bind(this)}
-                           compileCode = {this.compileCode.bind(this)}
-                           changeCode = {this.handleChange.bind(this)}
-                           changeNoti = {this.setNotification.bind(this)}
-                           playCode = {this.executeCode.bind(this)}
-                           code = {this.state.code}
-                           notification = {this.state.notification}
-                          />
-            </Col>
-            <Col md={4} sm={4} lg = {4}>
-              <DataDisplay
-                  opRegs = {this.state.operationRegs}
-                  utilRegs = {this.state.utilRegs}
-                  memoryOps = {this.state.memoryOps}
-              />
-            </Col>
-          </Row>
-        </Grid>
-<div>
-
-*/
 
 export default App;

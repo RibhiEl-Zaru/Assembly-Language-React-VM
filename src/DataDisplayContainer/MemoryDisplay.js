@@ -30,6 +30,7 @@ export default class MemoryDisplay extends React.Component {
       memoryOps : this.props.memoryOps
     }
   }
+  /*
   componentDidMount() {
        $(this.refs.main).DataTable({
           dom: '<"data-table-wrapper"t>',
@@ -47,11 +48,12 @@ export default class MemoryDisplay extends React.Component {
    shouldComponentUpdate() {
        return false;
    }
-
+*/
    render() {
+     console.log("MEM DISPLAY!", this.props.memoryOps);
        return (
          <div>
-           {this.state.memoryOps.map((op, index) => (
+           {this.props.memoryOps.map((op, index) => (
              <center>
              <DataRow
                  instruction = {op.instruction}

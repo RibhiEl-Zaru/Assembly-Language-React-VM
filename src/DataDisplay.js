@@ -17,7 +17,7 @@ export default class DataDisplay extends React.Component {
     }
   }
   render(){
-
+    console.log("DAT DISP", this.props.memoryOps);
     return(
       <div id = "parent">
 
@@ -27,7 +27,7 @@ export default class DataDisplay extends React.Component {
         </Center>
         <Center>
 
-          <RegisterDisplay utilRegs = {this.state.utilRegs} memoryOps = {this.state.memoryOps} opRegs = {this.state.opRegs} />
+          <RegisterDisplay utilRegs = {this.props.utilRegs} memoryOps = {this.props.memoryOps} opRegs = {this.props.opRegs} />
 
         </Center>
         </div>
@@ -36,7 +36,7 @@ export default class DataDisplay extends React.Component {
         </center>
         <div>
               <MemoryDisplay
-                  memoryOps = {this.state.memoryOps}
+                  memoryOps = {this.props.memoryOps}
               />
         </div>
 

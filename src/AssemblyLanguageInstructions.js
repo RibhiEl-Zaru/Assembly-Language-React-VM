@@ -116,6 +116,7 @@ var MethodEnum = {
 
 export default class AssemblyLanguageInstructions extends React.Component {
   constructor(props){
+    console.log(props);
     super(props);
   }
 
@@ -144,7 +145,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
     }
     else if (methodName == "STO") {
 
-      this.STO(Rs, offset, Rd);
+      this.STO(Rd, offset, Rs);
 
     }
     else if (methodName == "MOV") {
@@ -219,65 +220,82 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const dest = base + offset
 
-    const val = 0; // Val is RAM[base + offset]
+    const val = dest; // Val is RAM[base + offset]
     Rs.value = val;
 
   }
+
+
+  STO(Rs, offset, Rd){
+    /* STO Rs, offset(Rd): let base be the contents of register Rd,
+     stores the contents of register Rs into location base + offset in the memory.
+     */
+     console.log("STO");
+    const val = Rs.value;
+    const  base = Rd.value;
+    const dest = base + offset;
+
+    this.props.memory.set(dest, val); // Mem = location base + offset in memory
+    this.props.memOps.push({instruction: "STO " + Rd.name + " " + offset + " " + Rs.name, address : "x" + dest, value: val})
+    console.log(this.props.memOps);
+  }
+
+  //CHECK
   LI(Rd, number){ // Li Rd, number: loads number into register Rd.
     const num = number;
     Rd.value = num;
-    console.log(Rd);
   }
 
-  STORE(Rd, offset, Rs){ // STO Rs, offset(Rd): let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory.
-    const  base = Rd.value;
-    const dest = base + offset;
+  //CHECK
+  MOV(Rd, Rs){   // MOV Rd, Rs: copies the contents of register Rs into register Rd.
+    console.log(Rd);
+    console.log(Rs);
     const val = Rs.value;
 
-    const mem = val; // Mem = location base + offset in memory
+    Rd.value = val;
   }
 
-  MOV(Rd, Rs){   // MOV Rd, Rs: copies the contents of register Rs into register Rd.
-    Rd.value = Rs.value;
-  }
+  //CHECK
 
-
-  ADD(Rd, Rs, Rt){ //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
-          const x = Rs.value;
-          const y = Rt.value;
+  ADD(RD, RS, RT){ //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
+          const x = RS.value;
+          const y = RT.value;
+          console.log(x);
+          console.log(y);
           const newVal = x + y;
-          Rd.value = newVal;
-          console.log(newVal);
+
+          RD.value = newVal;
     }
 
+  //CHECK
 
-  SUB(Rd, Rs, Rt){    //SUB Rd, Rs, Rt: subtracts the contents of register Rt from Rs and stores the difference in register Rd.
+  SUB(RD, RS, RT){    //SUB Rd, Rs, Rt: subtracts the contents of register Rt from Rs and stores the difference in register Rd.
 
-    const x = Rs.value;
-    const y = Rt.value;
+    const x = RS.value;
+    const y = RT.value;
     const newVal = x - y;
-    Rd.value = newVal;
-    console.log(newVal);
+    RD.value = newVal;
   }
 
+  //CHECK
   MUL(Rd, Rs, Rt){    // MUL Rd, Rs, Rt: multiplies the contents of register Rt from Rs and stores the product in register Rd.
 
     const x = Rs.value;
     const y = Rt.value;
     const newVal = x * y;
     Rd.value = newVal;
-    console.log(newVal);
   }
 
+  //CHECK
   DIV(Rd, Rs, Rt){    // DIV Rd, Rs, Rt: divides the contents of register Rs by Rt and stores the integer quotient in register Rd.
 
     const x = Rs.value;
     const y = Rt.value;
     const newVal = x / y;
     Rd.value = newVal;
-    console.log(newVal);
   }
 
+  //CHECK
   CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs == Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
     //Get PSW
 
@@ -302,19 +320,21 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
   BLT(disp){ // BLT disp: if PSW is negative, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW >= 0, this instruction does nothing.
     //Get PSW
-
+    const  psw = this.props[1].value;
   }
 
 
 
   BEQ(disp){ // BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
       //Get PSW
+     const psw = this.props[1].value;
+
 
   }
 
   BGT(disp){ // BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW <= 0, this instruction does nothing.
       //Get PSW
-
+      const psw = this.props[1].value;
   }
   JMP(disp){  // JMP disp: causes the new value of PC to be the sum PC + disp.
 

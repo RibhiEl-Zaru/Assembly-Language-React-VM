@@ -53,7 +53,8 @@ export default class CodeDisplay extends React.Component {
                     compileCode = {this.props.compileCode}
                     changeNoti = {this.props.changeNoti}
                     fileArray = {this.state.fileArray}
-                    playCode = {this.props.playCode}
+                    playCode = {this.props.testRun}
+                    stopCode = {this.props.stopCode}
                     timer = {this.props.timer}
                     setFiles = {this.onFileDrop.bind(this)}
                     timerChange = {this.props.timerChange}

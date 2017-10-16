@@ -28,8 +28,8 @@ export default class ControlConsole extends React.Component {
   onIncrement = (value) =>{
     this.props.timerChange(value);
   }
-  onPlay(){
-
+  onPlay = (value)=> {
+    this.props.playCode();
   }
 
   onStop(){
@@ -52,7 +52,7 @@ export default class ControlConsole extends React.Component {
        <Col xs={3} md={3}  lg = {3}>
        <Center>
             <ButtonToolbar>
-               <Button onClick = {this.props.playCode} bsSize="medium" bsStyle="success">Play</Button>
+               <Button onClick = {this.onPlay.bind(this)} bsSize="medium" bsStyle="success">Play</Button>
                <Button onClick = {this.props.stopCode} bsSize="medium" bsStyle="primary">Stop</Button>
                <Button onClick = {this.props.stepCode} bsSize="medium" bsStyle="danger">Step</Button>
            </ButtonToolbar>
