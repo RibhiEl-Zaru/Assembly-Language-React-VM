@@ -30,7 +30,6 @@ let UTIL_REGS = [
 ];
 
 let MEMORY_OPS = [];
-
 let MEMORY = new Map();
 
 var InstrTypes = {
@@ -63,6 +62,8 @@ class App extends React.Component {
       operationRegs : OP_REGS,
       utilRegs : UTIL_REGS,
       memoryOps : MEMORY_OPS,
+      memory    : MEMORY,
+      inputMem   : new Map(),
       currLine : 0,
       pause     : false,
       timer : 3,
@@ -99,6 +100,7 @@ class App extends React.Component {
                         opRegs = {this.state.operationRegs}
                         utilRegs = {this.state.utilRegs}
                         memoryOps = {this.state.memoryOps}
+                        updateDataArray = {this.updateMemory.bind(this)}
                     />
                   </Col>
                 </Row>
@@ -113,7 +115,10 @@ class App extends React.Component {
 
   }
 
-
+  updateMemory(loc, val){
+    this.state.inputMem.set(loc, val);;
+    console.log(this.state.inputMem);
+  }
   updateDimensions(){
     this.setState({width : (window.innerWidth/2)})
   }
@@ -625,13 +630,13 @@ class App extends React.Component {
   resetMemory(){
     MEMORY.clear();
     MEMORY_OPS.length = 0;
+    console.log(this.state.inputMem);
+
+    for (let [k, v] of this.state.inputMem) {
+      MEMORY.set(k, v);
+    }
     this.setState({MEMORY, MEMORY_OPS})
 
-    console.log("memReset");
-    console.log(this.state.MEMORY);
-    console.log("vs : ", MEMORY);
-    console.log(this.state.MEMORY_OPS);
-    console.log("vs : ", MEMORY_OPS);
 
   }
 

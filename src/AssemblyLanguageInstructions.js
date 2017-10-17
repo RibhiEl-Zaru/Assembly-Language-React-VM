@@ -117,7 +117,6 @@ var MethodEnum = {
 
 export default class AssemblyLanguageInstructions extends React.Component {
   constructor(props){
-    console.log(props);
     super(props);
   }
 

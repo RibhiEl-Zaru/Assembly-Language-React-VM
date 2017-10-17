@@ -2,6 +2,7 @@ import React from "react";
 import RegisterDisplay from "./DataDisplayContainer/RegisterDisplay.js"
 import MemoryDisplay from "./DataDisplayContainer/MemoryDisplay.js"
 import SystemMessage from "./DataDisplayContainer/SystemMessage.js"
+import DataSegment from "./DataDisplayContainer/DataSegment.js"
 import Center from 'react-center';
 
 import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
@@ -9,11 +10,12 @@ import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-boots
 export default class DataDisplay extends React.Component {
   constructor(props){
     super(props)
+    console.log(props);
 
     this.state ={
       opRegs : this.props.opRegs,
       utilRegs : this.props.utilRegs,
-      memoryOps : this.props.memoryOps
+      memoryOps : this.props.memoryOps,
 
     }
   }
@@ -31,6 +33,11 @@ export default class DataDisplay extends React.Component {
           <RegisterDisplay utilRegs = {this.props.utilRegs} memoryOps = {this.props.memoryOps} opRegs = {this.props.opRegs} />
 
         </Center>
+        </div>
+        <div>
+            <DataSegment
+              updateDataArray = {this.props.updateDataArray}
+            />
         </div>
         <div>
               <MemoryDisplay
