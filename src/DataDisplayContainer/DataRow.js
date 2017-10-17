@@ -24,7 +24,7 @@ export default class DataRow extends React.Component {
 
       <h4>
         <label className = "instruction">
-          &nbsp; {this.state.instruction}  &nbsp; &nbsp; &nbsp;  x69 &nbsp; &nbsp; &nbsp; &nbsp;   {this.state.value}
+          &nbsp; {this.state.instruction}  &nbsp; &nbsp; &nbsp;  {this.state.address} &nbsp; &nbsp; &nbsp; &nbsp;   {this.state.value}
         </label>
 
 

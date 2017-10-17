@@ -149,7 +149,7 @@ class App extends React.Component {
     this.resetMemory();
     let PCVal = parseInt(UTIL_REGS[0].value.substring(1));
     let loc = PCVal /4; //Divide by 4 to get the Array index, as PC increments by 4.
-
+    console.log("INSTRUCTIONS", instructions);
     while(loc < instructions.length){
       PCVal = parseInt(UTIL_REGS[0].value.substring(1));
       loc = PCVal /4; //Divide by 4 to get the Array index, as PC increments by 4.
@@ -163,9 +163,6 @@ class App extends React.Component {
       UTIL_REGS[0].value = "x" + (PCVal + 4);
 
       home.executeLineOfCode(PCVal, toExecute);
-
-      console.log("Post Exec" , MEMORY_OPS);
-
       home.setState({utilRegs : UTIL_REGS, memoryOps : MEMORY_OPS});
       console.log(MEMORY_OPS);
 
@@ -196,6 +193,7 @@ class App extends React.Component {
 
         var home = this;
 
+        console.log(rtInfo);
 
            if(rsInfo != null){
              rs = OP_REGS[parseInt(rsInfo.substr(-1))];
@@ -220,6 +218,7 @@ class App extends React.Component {
            }
 
 
+           console.log(instr, rd, rs, rt);
            armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
            //Increment PC
            home.setState({operationRegs : OP_REGS});
@@ -337,9 +336,18 @@ class App extends React.Component {
           let rs = "";
 
           let regExists = false;
+          e = e.replace(/\s+/g, '');
+          e = e.toUpperCase();
 
-          e = e.substring(e.indexOf(" ")+1, e.length);
-          rd = e.substring(0, e.indexOf(" "));
+          if(!e.includes(",")){
+            this.setNotification("Forgot to include comma in instruction " + (i+1));
+            setTimeout((function(){
+              home.setNotification("")
+            }), 3000);
+            break;
+          }
+
+          rd = e.substring(e.indexOf("R"), e.indexOf(","));
 
           regExists = this.testForRegisterPresence(rd);
 
@@ -352,12 +360,21 @@ class App extends React.Component {
             break;
           }
 
-          e = e.substring(e.indexOf(" ")+1, e.length);
-          offset = e.substring(0, e.indexOf(" "));
 
 
-          e = e.substring(e.indexOf(" ")+1, e.length);
-          rs = e.substring(0, e.indexOf(" "));
+          e = e.substring(e.indexOf(",")+1, e.length);
+
+
+          console.log("EEEK", e);
+          offset = e.substring(0, e.indexOf("("));
+
+          console.log("offset", offset);
+
+
+          e = e.substring(e.indexOf("(")+1, e.length);
+          rs = e.substring(0, e.indexOf(")"));
+
+          console.log("rs", rs);
 
           regExists = this.testForRegisterPresence(rs);
 

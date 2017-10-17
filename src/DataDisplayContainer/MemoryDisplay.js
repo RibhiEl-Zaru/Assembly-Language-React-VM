@@ -30,38 +30,37 @@ export default class MemoryDisplay extends React.Component {
       memoryOps : this.props.memoryOps
     }
   }
-  /*
-  componentDidMount() {
-       $(this.refs.main).DataTable({
-          dom: '<"data-table-wrapper"t>',
-          data: this.props.names,
-          columns,
-          ordering: false
-       });
-   }
-   componentWillUnmount(){
-      $('.data-table-wrapper')
-      .find('table')
-      .DataTable()
-      .destroy(true);
-   }
-   shouldComponentUpdate() {
-       return false;
-   }
-*/
+
    render() {
+     let  memoryShown;
+     if (this.props.memoryOps.length <= 0){
+       memoryShown = (
+
+         <center>
+            <h6>
+              No Contents in Memory
+            </h6>
+         </center>
+
+       )
+     }
      console.log("MEM DISPLAY!", this.props.memoryOps);
        return (
          <div>
+
+         <Center>
+           <h2> Memory Display </h2>
+         </Center>
+            {memoryShown}
            {this.props.memoryOps.map((op, index) => (
              <center>
              <DataRow
                  instruction = {op.instruction}
-                 address = {op.op}
+                 address = {op.address}
                  value = {op.value}
                  width = "200px"
                />
-           </center>
+               </center>
            ))}
          </div>
        )

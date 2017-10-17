@@ -1,6 +1,7 @@
 import React from "react";
 import RegisterDisplay from "./DataDisplayContainer/RegisterDisplay.js"
 import MemoryDisplay from "./DataDisplayContainer/MemoryDisplay.js"
+import SystemMessage from "./DataDisplayContainer/SystemMessage.js"
 import Center from 'react-center';
 
 import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
@@ -31,16 +32,23 @@ export default class DataDisplay extends React.Component {
 
         </Center>
         </div>
-        <center>
-          <h3> Memory Display </h3>
-        </center>
         <div>
               <MemoryDisplay
                   memoryOps = {this.props.memoryOps}
               />
         </div>
 
+
+
       </div>
     )
   }
 }
+
+/*
+<div>
+    <SystemMessage
+    />
+</div>
+
+*/

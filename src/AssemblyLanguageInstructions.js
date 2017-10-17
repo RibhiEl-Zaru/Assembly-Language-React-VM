@@ -78,6 +78,7 @@ var MethodEnum = {
     The following Operations are Memory based operations.
 
     Input: Rd, Offset, Rs
+    EX: STO R0, 0(R1)
     */
     "LOD": {name: "LOD", code: "M"},
     "STO": {name: "STO", code: "M"},
@@ -219,10 +220,8 @@ export default class AssemblyLanguageInstructions extends React.Component {
     const base = Rs.value;
 
     const dest = base + offset
-
-    const val = dest; // Val is RAM[base + offset]
-    Rs.value = val;
-
+    const val = this.props.memory.get(dest); // Val is RAM[base + offset]
+    Rd.value = val;
   }
 
 
@@ -236,7 +235,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
     const dest = base + offset;
 
     this.props.memory.set(dest, val); // Mem = location base + offset in memory
-    this.props.memOps.push({instruction: "STO " + Rd.name + " " + offset + " " + Rs.name, address : "x" + dest, value: val})
+    this.props.memOps.push({instruction: "STO " + Rd.name + " " + offset + "(" + Rs.name+ ")", address : "x" + dest, value: val})
     console.log(this.props.memOps);
   }
 

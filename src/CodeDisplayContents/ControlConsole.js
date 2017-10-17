@@ -64,7 +64,10 @@ export default class ControlConsole extends React.Component {
        </p>
        <Row className="show-grid">
         <Center>
-          <Button onClick = {this.props.compileCode} bsStyle="success" bsSize="medium">Compile Code</Button>
+          <ButtonToolbar>
+            <Button onClick = {this.props.compileCode} bsStyle="success" bsSize="medium">Compile</Button>
+            <Button onClick = {this.props.compileCode} bsStyle="info" bsSize="medium">Reset</Button>
+          </ButtonToolbar>
          </Center>
        </Row>
 
