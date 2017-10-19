@@ -234,7 +234,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
     const dest = base + offset;
 
     this.props.memory.set(dest, val); // Mem = location base + offset in memory
-    this.props.utilRegs.push({instruction: "STO " + Rd.name + " " + offset + "(" + Rs.name+ ")", address : "x" + dest, value: val})
+    this.props.memOps.push({instruction: "STO " + Rd.name + " " + offset + "(" + Rs.name+ ")", address : "x" + dest, value: val})
     console.log(this.props.utilRegs);
   }
 

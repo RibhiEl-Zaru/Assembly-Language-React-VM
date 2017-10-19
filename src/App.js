@@ -148,6 +148,7 @@ class App extends React.Component {
 
   step(e){
     this.setPause(e);
+    this.executeLineOfCode();
   }
   setPause(pause){
 
@@ -169,8 +170,6 @@ class App extends React.Component {
         secondsElapsed: (home.state.secondsElapsed + 1) % home.state.timer
 
       });
-
-
     }, 1000);
 
   }
@@ -180,21 +179,16 @@ class App extends React.Component {
         console.log("PCVAl is " , PCVal);
         let loc = PCVal /4;
 
-        if (loc > instructions.length) {
-          console.log("Breaking loc", loc);
-          console.log("ENd of method");
+        if (loc >= instructions.length) {
+          console.log("Time to break out!");
           this.setPause();
-
         }
         else{
 
         const instruct = instructions[loc];
-        console.log("INSTRUCTIONS", instructions);
         UTIL_REGS[0].value = "x" + (PCVal + 4);
 
         let z = loc+1;
-        console.log(loc);
-        console.log(instruct);
 
         let instr = instruct[0];
         let rdInfo = instruct[1];
@@ -212,16 +206,26 @@ class App extends React.Component {
         let offset = null;
         let disp = null;
 
-           if(rsInfo != null){
-             rs = OP_REGS[parseInt(rsInfo.substr(-1))];
-           }
+        if(rsInfo != null){
+                if (rsInfo.substr(-1) == "Z"){
+                  rs = UTIL_REGS[2];
+                }else{
+                  rs = OP_REGS[parseInt(rsInfo.substr(-1))];
+                  }
 
-           if(rdInfo != null){
-             rd = OP_REGS[parseInt(rdInfo.substr(-1))];
-           }
+             }
+            //IF RD is ZeroRegister! WE have to notify the user that that is ILLEGAL
+            if(rdInfo != null){
+                 rd = OP_REGS[parseInt(rdInfo.substr(-1))];
+             }
 
            if(rtInfo != null){
-             rt = OP_REGS[parseInt(rtInfo.substr(-1))];
+
+             if (rtInfo.substr(-1) == "Z"){
+               rt = UTIL_REGS[2];
+             }else{
+               rt = OP_REGS[parseInt(rtInfo.substr(-1))];
+             }
            }
            if(immediateInfo != null){
              number = parseInt(immediateInfo);
@@ -235,7 +239,6 @@ class App extends React.Component {
            }
 
 
-           console.log(instr, rd, rs, rt);
            armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
            //Increment PC
            this.setState({
@@ -247,68 +250,6 @@ class App extends React.Component {
 
 
 
-  }
-
-  executeCode(){
-    for (var i = 0; i < instructions.length; i ++){
-
-      let z = i+1;
-
-      let instruct = instructions[i];
-
-      let instr = instruct[0];
-      let rdInfo = instruct[1];
-      let rsInfo = instruct[2];
-
-      let rtInfo = instruct[3];
-      let immediateInfo = instruct[4];
-      let offsetInfo = instruct[5];
-      let dispInfo = instruct[6];
-
-      let rs = null;
-      let rd = null;
-      let rt = null;
-      let number = null;
-      let offset = null;
-      let disp = null;
-
-      var home = this;
-
-      setTimeout((function(){
-         if(rsInfo != null){
-           rs = OP_REGS[parseInt(rsInfo.substr(-1))];
-         }
-
-         if(rdInfo != null){
-           rd = OP_REGS[parseInt(rdInfo.substr(-1))];
-         }
-
-         if(rtInfo != null){
-           rt = OP_REGS[parseInt(rtInfo.substr(-1))];
-         }
-         if(immediateInfo != null){
-           number = parseInt(immediateInfo);
-         }
-
-         if(offsetInfo != null){
-           offset = parseInt(offsetInfo);
-         }
-         if(dispInfo != null){
-           disp = parseInt(dispInfo);
-         }
-
-
-         armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
-         //Increment PC
-         home.setState({operationRegs : OP_REGS,  currLine : z-1});
-         home.setState({})
-
-
-       }), execTime * this.state.timer * z);
-
-
-
-    }
   }
 
   compileCode(){
@@ -369,11 +310,16 @@ class App extends React.Component {
 
           rd = e.substring(e.indexOf("R"), e.indexOf(","));
 
-          regExists = this.testForRegisterPresence(rd);
+          regExists = this.testForRegisterPresence(rd, false);
 
           if(!regExists /*The Value Register does not exist*/){
 
-            this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+            if(rd.substr(-1) == "Z"){
+              this.setNotification("Cannot use RZ as a Destination Register");
+            }else{
+              this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+            }
+
             setTimeout((function(){
               home.setNotification("")
             }), 3000);
@@ -385,18 +331,13 @@ class App extends React.Component {
           e = e.substring(e.indexOf(",")+1, e.length);
 
 
-          console.log("EEEK", e);
           offset = e.substring(0, e.indexOf("("));
-
-          console.log("offset", offset);
-
 
           e = e.substring(e.indexOf("(")+1, e.length);
           rs = e.substring(0, e.indexOf(")"));
 
-          console.log("rs", rs);
 
-          regExists = this.testForRegisterPresence(rs);
+          regExists = this.testForRegisterPresence(rs, true);
 
           if(!regExists /*The Source Register does not exist*/){
             this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
@@ -428,10 +369,18 @@ class App extends React.Component {
           e = e.substring(e.indexOf(" ")+1, e.length);
           rd = e.substring(0, e.indexOf(" "));
 
-          regExists = this.testForRegisterPresence(rd);
+
+          regExists = this.testForRegisterPresence(rd, false);
+
+          console.log(regExists);
           if(!regExists /*The Value Register does not exist*/){
 
-            this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+            if(rd.substr(-1) == "Z"){
+              this.setNotification("Cannot use RZ as a Destination Register");
+            }else{
+              this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+            }
+
             setTimeout((function(){
               home.setNotification("")
             }), 3000);
@@ -478,7 +427,7 @@ class App extends React.Component {
           e = e.substring(e.indexOf(" ")+1, e.length);
           rs = e.substring(0, e.indexOf(" "));
 
-          regExists = this.testForRegisterPresence(rs);
+          regExists = this.testForRegisterPresence(rs, true);
 
           if(!regExists /*The Source Register does not exist*/){
             this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
@@ -507,10 +456,15 @@ class App extends React.Component {
         e = e.substring(e.indexOf(" ")+1, e.length);
         rd = e.substring(0, e.indexOf(" "));
 
-        regExists = this.testForRegisterPresence(rd);
+        regExists = this.testForRegisterPresence(rd, false);
         if(!regExists /*The Value Register does not exist*/){
 
-          this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+          if(rd.substr(-1) == "Z"){
+            this.setNotification("Cannot use RZ as a Destination Register");
+          }else{
+            this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
+          }
+
           setTimeout((function(){
             home.setNotification("")
           }), 3000);
@@ -520,7 +474,7 @@ class App extends React.Component {
         e = e.substring(e.indexOf(" ")+1, e.length);
         rs = e.substring(0, e.indexOf(" "));
 
-        regExists = this.testForRegisterPresence(rs);
+        regExists = this.testForRegisterPresence(rs, true);
 
         if(!regExists /*The Source Register does not exist*/){
           this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
@@ -533,7 +487,7 @@ class App extends React.Component {
         e = e.substring(e.indexOf(" ")+1, e.length);
         rt = e.substring(0, e.indexOf(" "));
 
-        regExists = this.testForRegisterPresence(rt);
+        regExists = this.testForRegisterPresence(rt, true);
 
         if(!regExists /*The Source Register does not exist*/){
           this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
@@ -586,7 +540,7 @@ class App extends React.Component {
         e = e.substring(e.indexOf(" ")+1, e.length);
         rs = e.substring(0, e.indexOf(" "));
 
-        regExists = this.testForRegisterPresence(rs);
+        regExists = this.testForRegisterPresence(rs, true);
         if(!regExists /*The Value Register does not exist*/){
 
           this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
@@ -599,7 +553,7 @@ class App extends React.Component {
         e = e.substring(e.indexOf(" ")+1, e.length);
         rt = e.substring(0, e.indexOf(" "));
 
-        regExists = this.testForRegisterPresence(rt);
+        regExists = this.testForRegisterPresence(rt, true);
 
         if(!regExists /*The Source Register does not exist*/){
           this.setNotification("Source Register in instruction " + (i+1) + " does not exist");
@@ -616,7 +570,6 @@ class App extends React.Component {
         instructions.push([op, null, rs, rt, null , null, null]);
       }
     }
-    this.setNotification(successfulCompilationNoti);
     var home = this;
     setTimeout((function(){
       home.setNotification("");
@@ -669,13 +622,18 @@ class App extends React.Component {
 
   }
 
-  testForRegisterPresence(reg){
+  testForRegisterPresence(reg, isDest){
     if (reg.length > 2){
       return false;
     }
 
     if(reg.substr(0,1) != "R"){
       return false;
+    }
+
+    console.log(reg.substr(-1));
+    if (reg.substr(-1) == "Z"){
+      return (true && isDest);
     }
 
     let loc = 0;
