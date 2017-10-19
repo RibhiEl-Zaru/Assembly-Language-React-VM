@@ -228,14 +228,14 @@ export default class AssemblyLanguageInstructions extends React.Component {
     /* STO Rs, offset(Rd): let base be the contents of register Rd,
      stores the contents of register Rs into location base + offset in the memory.
      */
-     console.log("STO");
+    console.log("STO");
     const val = Rs.value;
     const  base = Rd.value;
     const dest = base + offset;
 
     this.props.memory.set(dest, val); // Mem = location base + offset in memory
-    this.props.memOps.push({instruction: "STO " + Rd.name + " " + offset + "(" + Rs.name+ ")", address : "x" + dest, value: val})
-    console.log(this.props.memOps);
+    this.props.utilRegs.push({instruction: "STO " + Rd.name + " " + offset + "(" + Rs.name+ ")", address : "x" + dest, value: val})
+    console.log(this.props.utilRegs);
   }
 
   //CHECK
@@ -258,10 +258,10 @@ export default class AssemblyLanguageInstructions extends React.Component {
   ADD(RD, RS, RT){ //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
           const x = RS.value;
           const y = RT.value;
-          console.log(x);
-          console.log(y);
+
           const newVal = x + y;
 
+          console.log("newVal " + newVal);
           RD.value = newVal;
     }
 
@@ -296,7 +296,6 @@ export default class AssemblyLanguageInstructions extends React.Component {
   //CHECK
   CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs == Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
     //Get PSW
-
     const toCheck = RS.value - RT.value;
     let val = 0;
     if(toCheck > 1){
@@ -305,42 +304,73 @@ export default class AssemblyLanguageInstructions extends React.Component {
     else if(toCheck < 1){
       val = -1;
     }
-    this.props[1].value = val;
+    this.props.utilRegs.value = val;
   }
 
   JSR(disp){  // JSR disp: sets RA = PC and then PC = PC + disp.
 
+    const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
+    this.props.utilRegs[2].value = "x" + PCVal; // Set RA = PC
+
+    const newVal = PCVal + disp;
+    this.props.utilRegs[0].value = "x" + newVal; // Set PC = PC + disp;
+
   }
 
   R(){ // R: sets PC = RA.
-
+    const RAVal = this.props.utilRegs[2].value;
+    this.props.utilRegs[0].value = "x" + RAVal;
   }
 
   BLT(disp){ // BLT disp: if PSW is negative, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW >= 0, this instruction does nothing.
     //Get PSW
-    const  psw = this.props[1].value;
+    const  psw = this.props.utilRegs[1].value;
+    if(psw < 0){
+         const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+        const loc = PCVal/4;
+
+        const newLoc = loc + disp;
+        this.props.utilRegs[0].value = "x" + newLoc;
+    }
   }
 
 
 
+  //CHECK
   BEQ(disp){ // BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
       //Get PSW
-     const psw = this.props[1].value;
+     console.log("props", this.props);
+     const psw = this.props.utilRegs[1].value;
+     console.log(psw);
+     if(psw == 0){
+       const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+       const loc = PCVal/4;
 
+       const newLoc = (loc + disp)*4;
+       this.props.utilRegs[0].value = "x" + newLoc;
 
+     }
   }
 
   BGT(disp){ // BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW <= 0, this instruction does nothing.
       //Get PSW
-      const psw = this.props[1].value;
+      const psw = this.props.utilRegs.value;
+      if (psw > 0) {
+           const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+          const loc = PCVal/4;
+
+          const newLoc = loc + disp;
+          this.props.utilRegs[0].value = "x" + newLoc;
+      }
   }
+
   JMP(disp){  // JMP disp: causes the new value of PC to be the sum PC + disp.
+     const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+    const loc = PCVal/4;
 
-  }
+    const newLoc = loc + disp;
+    this.props.utilRegs[0].value = "x" + newLoc;
 
-
-  call(){
-    console.log("Tested static call");
   }
 
 }

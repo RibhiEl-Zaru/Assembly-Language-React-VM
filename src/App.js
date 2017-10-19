@@ -24,7 +24,7 @@ let OP_REGS = [
 let UTIL_REGS = [
   { name: "PC", value: "x0"  }, // Holds the address in RAM of the next instruction to be executed
   { name: "PSW", value: 0    }, //the PSW (or program status word) register holds information about the outcomes of comparisons, etc
-  { name: "RA", value: 0     }, // the RA (or return address) register holds the address of the instruction to return to after a JSR.
+  { name: "RA", value: "x0"     }, // the RA (or return address) register holds the address of the instruction to return to after a JSR.
   { name: "RZ", value: 0     }, // the Zero register holds the constant 0.
 
 ];
@@ -157,11 +157,9 @@ class App extends React.Component {
   playCode(){
 
     var home = this;
-    console.log("TIME TO EXEC");
     if(home.state.secondsElapsed == 0){
-      this.executeLineOfCode;
+      this.executeLineOfCode();
     }
-    this.executeLineOfCode();
     this.incrementer = setInterval(function(){
       if (home.state.secondsElapsed == home.state.timer -1){
         home.executeLineOfCode();
@@ -174,52 +172,30 @@ class App extends React.Component {
 
 
     }, 1000);
-    /*
-    this.resetRegisters();
-    this.resetMemory();
-    let PCVal = parseInt(UTIL_REGS[0].value.substring(1));
-    let loc = PCVal /4; //Divide by 4 to get the Array index, as PC increments by 4.
-    console.log("INSTRUCTIONS", instructions);
-    while(loc < instructions.length){
-      PCVal = parseInt(UTIL_REGS[0].value.substring(1));
-      loc = PCVal /4; //Divide by 4 to get the Array index, as PC increments by 4.
-      if(loc >= instructions.length){
-        break;
-      }
-    let home = this;
-    const toExecute = instructions[loc];
-    if (!this.state.pause) {
-
-      UTIL_REGS[0].value = "x" + (PCVal + 4);
-
-      home.executeLineOfCode(PCVal, toExecute);
-      home.setState({utilRegs : UTIL_REGS, memoryOps : MEMORY_OPS});
-      console.log(MEMORY_OPS);
-
-
-      }
-    }
-    */
-
 
   }
 
   executeLineOfCode(){
         let PCVal = parseInt(UTIL_REGS[0].value.substring(1));
+        console.log("PCVAl is " , PCVal);
         let loc = PCVal /4;
-        console.log(loc);
-        console.log(instructions.length);
-        if (loc >= instructions.length) {
+
+        if (loc > instructions.length) {
+          console.log("Breaking loc", loc);
           console.log("ENd of method");
           this.setPause();
 
         }
         else{
+
         const instruct = instructions[loc];
         console.log("INSTRUCTIONS", instructions);
         UTIL_REGS[0].value = "x" + (PCVal + 4);
 
         let z = loc+1;
+        console.log(loc);
+        console.log(instruct);
+
         let instr = instruct[0];
         let rdInfo = instruct[1];
         let rsInfo = instruct[2];
@@ -235,8 +211,6 @@ class App extends React.Component {
         let number = null;
         let offset = null;
         let disp = null;
-
-        console.log(rtInfo);
 
            if(rsInfo != null){
              rs = OP_REGS[parseInt(rsInfo.substr(-1))];
