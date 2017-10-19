@@ -67,6 +67,7 @@ class App extends React.Component {
       currLine : 0,
       pause     : false,
       timer : 3,
+      secondsElapsed : 0,
     }
 
   }
@@ -75,7 +76,9 @@ class App extends React.Component {
 
     render() {
 
-      console.log("PAPA", this.state.memoryOps, " and : " , MEMORY);
+      console.log(this.state.secondsElapsed);
+      console.log(this.incrementer);
+
       return (
       <div className = "papaBear">
         <Header/>
@@ -89,8 +92,9 @@ class App extends React.Component {
                                  testRun    = {this.playCode.bind(this)}
                                  changeCode = {this.handleChange.bind(this)}
                                  changeNoti = {this.setNotification.bind(this)}
-                                 playCode = {this.executeCode.bind(this)}
+                                 playCode = {this.playCode.bind(this)}
                                  stopCode = {this.setPause.bind(this)}
+                                 stepCode     = {this.step.bind(this)}
                                  code = {this.state.code}
                                  notification = {this.state.notification}
                                 />
@@ -100,7 +104,7 @@ class App extends React.Component {
                         opRegs = {this.state.operationRegs}
                         utilRegs = {this.state.utilRegs}
                         memoryOps = {this.state.memoryOps}
-                        updateDataArray = {this.updateMemory.bind(this)}
+                        updateDataArray = {this.updateMemory.bind(this)}  //Method that gets passed into the updateDataArray so the compiler knows what is input.
                     />
                   </Col>
                 </Row>
@@ -110,10 +114,6 @@ class App extends React.Component {
       );
     }
 
-  myTimer( e){
-
-
-  }
 
   updateMemory(loc, val){
     this.state.inputMem.set(loc, val);;
@@ -145,11 +145,36 @@ class App extends React.Component {
   setTimer(timer){
     this.setState({timer});
   }
+
+  step(e){
+    this.setPause(e);
+  }
   setPause(pause){
-    this.setState({pause});
+
+    clearInterval(this.incrementer);
   }
 
   playCode(){
+
+    var home = this;
+    console.log("TIME TO EXEC");
+    if(home.state.secondsElapsed == 0){
+      this.executeLineOfCode;
+    }
+    this.executeLineOfCode();
+    this.incrementer = setInterval(function(){
+      if (home.state.secondsElapsed == home.state.timer -1){
+        home.executeLineOfCode();
+      }
+
+      home.setState({
+        secondsElapsed: (home.state.secondsElapsed + 1) % home.state.timer
+
+      });
+
+
+    }, 1000);
+    /*
     this.resetRegisters();
     this.resetMemory();
     let PCVal = parseInt(UTIL_REGS[0].value.substring(1));
@@ -174,11 +199,26 @@ class App extends React.Component {
 
       }
     }
+    */
 
 
   }
 
-  executeLineOfCode(loc, instruct){
+  executeLineOfCode(){
+        let PCVal = parseInt(UTIL_REGS[0].value.substring(1));
+        let loc = PCVal /4;
+        console.log(loc);
+        console.log(instructions.length);
+        if (loc >= instructions.length) {
+          console.log("ENd of method");
+          this.setPause();
+
+        }
+        else{
+        const instruct = instructions[loc];
+        console.log("INSTRUCTIONS", instructions);
+        UTIL_REGS[0].value = "x" + (PCVal + 4);
+
         let z = loc+1;
         let instr = instruct[0];
         let rdInfo = instruct[1];
@@ -195,8 +235,6 @@ class App extends React.Component {
         let number = null;
         let offset = null;
         let disp = null;
-
-        var home = this;
 
         console.log(rtInfo);
 
@@ -226,8 +264,12 @@ class App extends React.Component {
            console.log(instr, rd, rs, rt);
            armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
            //Increment PC
-           home.setState({operationRegs : OP_REGS});
-
+           this.setState({
+               utilRegs : UTIL_REGS,
+               memoryOps : MEMORY_OPS,
+               operationRegs : OP_REGS
+             });
+    }
 
 
 
@@ -296,8 +338,7 @@ class App extends React.Component {
   }
 
   compileCode(){
-      this.resetRegisters();
-      this.resetMemory();
+      this.reset();
       this.setState({operationRegs : OP_REGS});
 
 
@@ -609,6 +650,20 @@ class App extends React.Component {
 
   }
 
+
+  reset(){
+      this.resetRegisters();
+      this.resetMemory();
+      this.resetCounter();
+  }
+
+  resetCounter(){
+      this.setState({
+        secondsElapsed: 0
+      });
+      clearInterval(this.incrementer);
+
+  }
   resetRegisters(){
       for (var i = 0; i < OP_REGS.length; i++){
         armInstrs.LI(OP_REGS[i], 0);
@@ -630,9 +685,9 @@ class App extends React.Component {
   resetMemory(){
     MEMORY.clear();
     MEMORY_OPS.length = 0;
-    console.log(this.state.inputMem);
-
     for (let [k, v] of this.state.inputMem) {
+
+      /*    Read what was held in the inputArray, and put that in the MEMORY*/
       MEMORY.set(k, v);
     }
     this.setState({MEMORY, MEMORY_OPS})

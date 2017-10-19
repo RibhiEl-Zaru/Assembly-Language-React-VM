@@ -55,6 +55,7 @@ export default class CodeDisplay extends React.Component {
                     fileArray = {this.state.fileArray}
                     playCode = {this.props.testRun}
                     stopCode = {this.props.stopCode}
+                    stepCode = {this.props.stepCode}
                     timer = {this.props.timer}
                     setFiles = {this.onFileDrop.bind(this)}
                     timerChange = {this.props.timerChange}

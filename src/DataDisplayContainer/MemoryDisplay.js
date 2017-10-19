@@ -44,7 +44,7 @@ export default class MemoryDisplay extends React.Component {
 
        )
      }
-     console.log("MEM DISPLAY!", this.props.memoryOps);
+     //console.log("MEM DISPLAY!", this.props.memoryOps);
        return (
          <div>
 

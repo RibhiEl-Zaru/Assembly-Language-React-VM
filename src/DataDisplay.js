@@ -6,7 +6,15 @@ import DataSegment from "./DataDisplayContainer/DataSegment.js"
 import Center from 'react-center';
 
 import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
+/*
+  This class holds arrays that students input into the SVM before
+  they compile.
 
+  These get allocated at the bottom of the stack addr[0], and move up,
+  taking 4 bits each.
+
+
+*/
 export default class DataDisplay extends React.Component {
   constructor(props){
     super(props)
@@ -20,7 +28,6 @@ export default class DataDisplay extends React.Component {
     }
   }
   render(){
-    console.log("DAT DISP", this.props.memoryOps);
     return(
       <div id = "parent">
 
@@ -44,8 +51,6 @@ export default class DataDisplay extends React.Component {
                   memoryOps = {this.props.memoryOps}
               />
         </div>
-
-
 
       </div>
     )

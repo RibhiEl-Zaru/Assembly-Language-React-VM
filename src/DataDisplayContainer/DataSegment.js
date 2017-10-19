@@ -57,7 +57,7 @@ export default class Register extends React.Component {
 
   render(){
 
-          console.log(this.props.dataArray);
+  //        console.log(this.props.dataArray);
     return(
     <FormGroup
       controlId="formBasicText"
