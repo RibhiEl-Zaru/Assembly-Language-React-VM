@@ -1,5 +1,4 @@
 import React from "react";
-import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
 
 import Register from "./Register.js"
 
@@ -7,7 +6,7 @@ export default class RegisterCol extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {
+    this.state={
       registers : this.props.registers,
     }
   }
@@ -22,10 +21,10 @@ export default class RegisterCol extends React.Component {
         {this.state.registers.map((register, index) => (
           <center>
           <Register
-              key = {index}
-              name = {register.name}
-              value = {register.value}
-              width = "200px"
+              key={index}
+              name={register.name}
+              value={register.value}
+              width="200px"
             />
         </center>
         ))}

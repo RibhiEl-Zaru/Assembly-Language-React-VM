@@ -1,7 +1,7 @@
 <snippet>
   <content><![CDATA[
 
-#  ${1: Project Name}
+#  Project Names
 
 This project was written by Ribhi El-Zaru with the supervision
 of Robert Muller for use by the Computer Science 101 Honors class
@@ -19,7 +19,7 @@ as details regarding constraints and features of the web application.
 ## Usage
 
 
-##Contributing
+## Contributing 
 
 ## Credits
 

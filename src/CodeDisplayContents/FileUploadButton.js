@@ -1,16 +1,14 @@
 import React from "react";
 import Dropzone from 'react-dropzone';
 import '../App.css';
-import { ButtonGroup, ButtonToolbar, Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
-import Center from 'react-center';
 
-let filesToSend = [];
+let filesToSend=[];
 
 
 export default class FileUploadButton extends React.Component {
   constructor() {
     super()
-    this.state = {
+    this.state={
       accept: 'text/plain',
       files: [],
       dropzoneActive: false
@@ -31,7 +29,7 @@ export default class FileUploadButton extends React.Component {
   }
 
   onDrop(files, rejectedFiles) {
-    filesToSend = []
+    filesToSend=[]
     console.log("files" , files);
     if(files[0] !== undefined){
       filesToSend.push(files[0]);
@@ -57,8 +55,8 @@ export default class FileUploadButton extends React.Component {
 
 
   render() {
-    const { accept, files, dropzoneActive } = this.state;
-    const overlayStyle = {
+    const { accept, dropzoneActive }=this.state;
+    const overlayStyle={
       top: 0,
       right: 0,
       bottom:0,
@@ -78,7 +76,7 @@ export default class FileUploadButton extends React.Component {
         onDrop={(files) => this.onDrop(files)}
         onDragEnter={this.onDragEnter.bind(this)}
         onDragLeave={this.onDragLeave.bind(this)}
-        setFiles = {this.props.setFiles}
+        setFiles={this.props.setFiles}
       >
         { dropzoneActive && <div style={overlayStyle}>Drop files...</div> }
         <div>

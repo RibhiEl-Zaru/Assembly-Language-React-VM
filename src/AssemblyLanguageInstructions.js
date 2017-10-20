@@ -1,12 +1,7 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 // import "bootstrap/dist/css/bootstrap.css";
 import "bootswatch/journal/bootstrap.css";
-import { Label, Navbar, NavItem, Nav, Grid, Row, Col } from "react-bootstrap";
-import App from "./App.js";
-import CodeDisplay from "./CodeDisplay.js";
-import DataDisplay from "./DataDisplay.js";
 
 /*
 
@@ -36,11 +31,11 @@ ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in r
 SUB Rd, Rs, Rt: subtracts the contents of register Rt from Rs and stores the difference in register Rd.
 MUL Rd, Rs, Rt: multiplies the contents of register Rt from Rs and stores the product in register Rd.
 DIV Rd, Rs, Rt: divides the contents of register Rs by Rt and stores the integer quotient in register Rd.
-CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs == Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
+CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs === Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
 JSR disp: sets RA = PC and then PC = PC + disp.
 R: sets PC = RA.
 BLT disp: if PSW is negative, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW >= 0, this instruction does nothing.
-BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
+BEQ disp: if PSW === 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
 BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW <= 0, this instruction does nothing.
 JMP disp: causes the new value of PC to be the sum PC + disp.
 HLT: causes the svm machine to print the contents of registers PC, PSW, RA, R0, R1, R2 and R3. It then stops, returning ().
@@ -64,7 +59,7 @@ var MethodEnum = {
   JSR: "JS", // JSR disp: sets RA = PC and then PC = PC + disp.
   R  : "R", // R: sets PC = RA.
   BLT: "BLT", // BLT disp: if PSW is negative, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW >= 0, this instruction does nothing.
-  BEQ: "BEQ", // BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
+  BEQ: "BEQ", // BEQ disp: if PSW === 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
   BGT: "BGT", // BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW <= 0, this instruction does nothing.
   JMP: "JMP", // JMP disp: causes the new value of PC to be the sum PC + disp.
   HLT: "HLT", // causes the svm machine to print the contents of registers PC, PSW, RA, R0, R1, R2 and R3. It then stops, returning ().
@@ -116,14 +111,11 @@ var MethodEnum = {
 
 
 export default class AssemblyLanguageInstructions extends React.Component {
-  constructor(props){
-    super(props);
-  }
 
   getMethodType(methodName){
     let method = MethodEnum.methods[methodName.toUpperCase()];
     console.log(method);
-    if (method == undefined) {
+    if (method === undefined) {
       return "X";
     }
     else{
@@ -135,75 +127,75 @@ export default class AssemblyLanguageInstructions extends React.Component {
   executeInstruction(methodName, Rd , Rs, Rt, number, offset, disp){
     methodName = methodName.toUpperCase();
     console.log(methodName);
-    if(methodName == "LOD"){
+    if(methodName === "LOD"){
       this.LOD(Rd, offset, Rs);
     }
-    else if (methodName == "LI") {
+    else if (methodName === "LI") {
 
       this.LI(Rd, number);
 
     }
-    else if (methodName == "STO") {
+    else if (methodName === "STO") {
 
       this.STO(Rd, offset, Rs);
 
     }
-    else if (methodName == "MOV") {
+    else if (methodName === "MOV") {
 
       this.MOV(Rd,Rs);
 
     }
-    else if (methodName == "ADD") {
+    else if (methodName === "ADD") {
 
       this.ADD(Rd, Rs, Rt);
 
     }
-    else if (methodName == "SUB") {
+    else if (methodName === "SUB") {
 
       this.SUB(Rd, Rs, Rt);
 
     }
-    else if (methodName == "MUL") {
+    else if (methodName === "MUL") {
 
       this.MUL(Rd, Rs, Rt);
 
     }
-    else if (methodName == "DIV") {
+    else if (methodName === "DIV") {
 
       this.DIV(Rd, Rs, Rt);
 
     }
-    else if (methodName == "CMP") {
+    else if (methodName === "CMP") {
 
       this.CMP(Rs, Rt);
 
     }
-    else if (methodName == "JSR") {
+    else if (methodName === "JSR") {
 
       this.JSR(disp);
 
     }
-    else if (methodName == "R") {
+    else if (methodName === "R") {
 
       this.R();
 
     }
-    else if (methodName == "BLT") {
+    else if (methodName === "BLT") {
 
       this.BLT(disp);
 
     }
-    else if (methodName == "BGT") {
+    else if (methodName === "BGT") {
 
       this.BGT(disp);
 
     }
-    else if (methodName == "BEQ") {
+    else if (methodName === "BEQ") {
 
       this.BEQ(disp);
 
     }
-    else if (methodName == "JMP") {
+    else if (methodName === "JMP") {
 
       this.JMP(disp);
 
@@ -294,7 +286,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
   }
 
   //CHECK
-  CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs == Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
+  CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs === Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
     //Get PSW
     const toCheck = RS.value - RT.value;
     let val = 0;
@@ -337,12 +329,12 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
 
   //CHECK
-  BEQ(disp){ // BEQ disp: if PSW == 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
+  BEQ(disp){ // BEQ disp: if PSW === 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
       //Get PSW
      console.log("props", this.props);
      const psw = this.props.utilRegs[1].value;
      console.log(psw);
-     if(psw == 0){
+     if(psw === 0){
        const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
        const loc = PCVal/4;
 

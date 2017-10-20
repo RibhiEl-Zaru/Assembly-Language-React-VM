@@ -1,11 +1,9 @@
 import React from "react";
 import RegisterDisplay from "./DataDisplayContainer/RegisterDisplay.js"
 import MemoryDisplay from "./DataDisplayContainer/MemoryDisplay.js"
-import SystemMessage from "./DataDisplayContainer/SystemMessage.js"
 import DataSegment from "./DataDisplayContainer/DataSegment.js"
 import Center from 'react-center';
 
-import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
 /*
   This class holds arrays that students input into the SVM before
   they compile.
@@ -20,7 +18,7 @@ export default class DataDisplay extends React.Component {
     super(props)
     console.log(props);
 
-    this.state ={
+    this.state={
       opRegs : this.props.opRegs,
       utilRegs : this.props.utilRegs,
       memoryOps : this.props.memoryOps,
@@ -29,26 +27,27 @@ export default class DataDisplay extends React.Component {
   }
   render(){
     return(
-      <div id = "parent">
+      <div id="parent">
 
-        <div id = "Registers">
+        <div>
+            <DataSegment
+              updateDataArray={this.props.updateDataArray}
+            />
+        </div>
+        <div id="Registers">
         <Center>
           <h3> Registers </h3>
         </Center>
         <Center>
 
-          <RegisterDisplay utilRegs = {this.props.utilRegs} memoryOps = {this.props.memoryOps} opRegs = {this.props.opRegs} />
+          <RegisterDisplay utilRegs={this.props.utilRegs} memoryOps={this.props.memoryOps} opRegs={this.props.opRegs} />
 
         </Center>
         </div>
-        <div>
-            <DataSegment
-              updateDataArray = {this.props.updateDataArray}
-            />
-        </div>
+
         <div>
               <MemoryDisplay
-                  memoryOps = {this.props.memoryOps}
+                  memoryOps={this.props.memoryOps}
               />
         </div>
 

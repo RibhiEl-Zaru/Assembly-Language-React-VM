@@ -1,6 +1,4 @@
 import React from "react";
-import { Center, Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
-import styles from '../App.css';
 export default class Register extends React.Component {
 
   constructor(props){

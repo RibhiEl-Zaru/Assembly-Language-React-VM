@@ -1,40 +1,33 @@
 import React from "react";
-import { FieldGroup, FormGroup, FormControl, ControlLabel, HelpBlock, Center, Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
-import styles from '../App.css';
+import {  FormGroup, FormControl, ControlLabel, HelpBlock} from "react-bootstrap";
 
-const badInput = "Only commas and numbers can be input to DataSegment"
-const goodInput = "Example input is : 34, 43, 72 "
+const badInput="Only commas and numbers can be input to DataSegment"
+const goodInput="Example input is : 34, 43, 72 "
 
 export default class Register extends React.Component {
 
 
   constructor(props){
     super(props);
-    this.state = {
+    this.state={
       //dataArray : this.props.dataArray,
       value: "",
       feedback: goodInput,
     }
   }
 
-  getValidationState() {
-    const length = this.state.value.length;
-    return 'success';
-
-  }
-
 
   handleChange(e) {
-    let str = e.target.value;
-    var isValid = /^[0-9, ]*$/.test(str);
+    let str=e.target.value;
+    var isValid=/^[0-9, ]*$/.test(str);
     console.log(isValid);
 
     if(isValid){
-      let newStr = str.replace(/\s+/g,"");
-      let numbers = newStr.replace(/(\r\n|\n|\r|)/gm,"");
-      let data = numbers.split(",")
+      let newStr=str.replace(/\s+/g,"");
+      let numbers=newStr.replace(/(\r\n|\n|\r|)/gm,"");
+      let data=numbers.split(",")
 
-      for (var i = 0; i < data.length; i++){
+      for (var i=0; i < data.length; i++){
           this.props.updateDataArray(i*4, data[i]);
 
       }
