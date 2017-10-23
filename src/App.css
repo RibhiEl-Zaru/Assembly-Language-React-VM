@@ -99,15 +99,9 @@
 
 .navbar {
     color: #FFFFFF;
-    background-color: #CC3333;
+    background-color: #FFFFFF;
 }
 
-/* OR*/
-
-.nav {
-    color: #FFFFFF;
-    background-color: #CC3333;
-}
 
 .instruction {
   border:2px solid black;

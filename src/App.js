@@ -1,4 +1,4 @@
-import React from 'react';;
+import React, { Component } from 'react';
 // import "bootstrap/dist/css/bootstrap.css";
 import "bootswatch/journal/bootstrap.css";
 import { Grid, Row, Col } from "react-bootstrap";
@@ -76,7 +76,9 @@ class App extends React.Component {
 
       return (
       <div className="papaBear">
-        <Header/>
+        <div >
+          <Header/>
+        </div>
               <Grid>
                 <Row>
                   <Col md={8} sm={8} lg={8}>
@@ -203,10 +205,10 @@ class App extends React.Component {
 
         if(rsInfo !== null){
                 if (rsInfo.substr(-1) === "Z"){
-                  rs=UTIL_REGS[2];
+                  rs=UTIL_REGS[3];
                 }else{
                   rs=OP_REGS[parseInt(rsInfo.substr(-1))];
-                  }
+                }
 
              }
             //IF RD is ZeroRegister! WE have to notify the user that that is ILLEGAL
@@ -543,8 +545,9 @@ class App extends React.Component {
 
 
         e=e.substring(e.indexOf(" ")+1, e.length);
-        rs=e.substring(0, e.indexOf(" "));
-
+        rs=e.substring(0, e.indexOf(","));
+        console.log(rs
+        );
         regExists=this.testForRegisterPresence(rs, true);
 
         if(!regExists /*The Value Register does not exist*/){
@@ -578,7 +581,7 @@ class App extends React.Component {
       }
     }
 
-    if (success){
+    if (success){ /*  If there are no*/
       home.setNotification(successfulCompilationNoti);
     }
     setTimeout((function(){
@@ -586,7 +589,6 @@ class App extends React.Component {
     }), 3000);
 
   }
-
 
   reset(){
       this.resetRegisters();
@@ -599,37 +601,34 @@ class App extends React.Component {
         secondsElapsed: 0
       });
       clearInterval(this.incrementer);
-
   }
+
   resetRegisters(){
+    /*
+    Iterate through registers and reset to their initial values.
+    */
       for (var i=0; i < OP_REGS.length; i++){
         armInstrs.LI(OP_REGS[i], 0);
       }
-
       for (var j=0; j < UTIL_REGS.length; j++){
-        if (j === 0){
+        if (j === 0 || j === 2){
           UTIL_REGS[j].value="x0";
         }else{
           armInstrs.LI(UTIL_REGS[j], 0);
         }
-
       }
-
       this.setState({operationRegs : OP_REGS, utilRegs : UTIL_REGS});
 
   }
 
   resetMemory(){
     MEMORY.clear();
-    MEMORY_OPS.length=0;
+    MEMORY_OPS.length=0; // This is a means of clearing the memory_Ops while maintaining the pointer.
     for (let [k, v] of this.state.inputMem) {
-
       /*    Read what was held in the inputArray, and put that in the MEMORY*/
       MEMORY.set(k, v);
     }
     this.setState({MEMORY, MEMORY_OPS})
-
-
   }
 
   testForRegisterPresence(reg, isDest){
@@ -640,16 +639,14 @@ class App extends React.Component {
     if(reg.substr(0,1) !== "R"){
       return false;
     }
-
-    console.log(reg.substr(-1));
     if (reg.substr(-1) === "Z"){
       return (true && isDest);
     }
 
-    let loc=0;
+    let loc = 0;
 
     try {
-      loc=parseInt(reg.substr(-1))
+      loc = parseInt(reg.substr(-1))
     }
     catch(err) {
       return false;

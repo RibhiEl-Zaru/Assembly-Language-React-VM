@@ -1,6 +1,6 @@
 import React from "react";
-import { Navbar} from "react-bootstrap";
-
+import styles from './App.css';
+import { Label, Navbar, NavItem, Nav, Grid, Row, Col , Button} from "react-bootstrap";
 
 export default class Header extends React.Component {
 

@@ -212,6 +212,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const dest = base + offset
     const val = this.props.memory.get(dest); // Val is RAM[base + offset]
+    console.log(val);
     Rd.value = val;
   }
 
@@ -348,9 +349,8 @@ export default class AssemblyLanguageInstructions extends React.Component {
       //Get PSW
       const psw = this.props.utilRegs.value;
       if (psw > 0) {
-           const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+          const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
           const loc = PCVal/4;
-
           const newLoc = loc + disp;
           this.props.utilRegs[0].value = "x" + newLoc;
       }
