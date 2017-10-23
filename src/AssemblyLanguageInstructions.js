@@ -98,9 +98,9 @@ var MethodEnum = {
     "BLT": {name: "BLT", code: "B"},
     "BEQ": {name: "BEQ", code: "B"},
     "BGT": {name: "BGT", code: "B"},
-    "JMP": {name: "JMP", code: "B"},
     "JSR": {name: "JSR", code: "B"},
 
+    "JMP": {name: "JMP", code: "J"},
     "R"  : {name: "R",   code: "E"},
     "HLT": {name: "HLT", code: "E"},
 
@@ -308,10 +308,10 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
   JSR(disp){  // JSR disp: sets RA = PC and then PC = PC + disp.
 
-    const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
+    const PCVal = parseInt(this.props.utilRegs[0].value.substring(1))*4;
     this.props.utilRegs[2].value = "x" + PCVal; // Set RA = PC
 
-    const newVal = PCVal + disp;
+    const newVal = PCVal + disp*4;
     this.props.utilRegs[0].value = "x" + newVal; // Set PC = PC + disp;
 
   }

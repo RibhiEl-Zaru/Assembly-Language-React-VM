@@ -36,6 +36,7 @@ var InstrTypes={
   BREAK:     "B",
   EMPTY:     "E",
   COMPARE:    "C",
+  JUMP:       "J",
 
 
 
@@ -516,14 +517,27 @@ class App extends React.Component {
         instructions.push([op, rd, rs, rt, null , null, null]);
 
       }
-      else if (opType === InstrTypes.BREAK) {
+      else if (opType == InstrTypes.BREAK){
+        let disp="";
+
+        e=e.substring(e.indexOf(" ")+1, e.length);
+        disp=e.substring(0, e.indexOf(" ")).trim();
+        console.log(disp);
+
+        e=e.substring(e.indexOf(" ")+1, e.length);
+        e=e.trim();
+
+        instructions.push([op, null, null, null, null , null, disp]);
+
+      }
+      else if (opType === InstrTypes.JUMP) {
             /**
               Process a Jump instruction
             */
 
             let disp="";
 
-            e=e.substring(e.indexOf(" ")+1, e.length);
+            e=e.substring(e.indexOf("(")+1,e.indexOf("("));
             console.log(e);
             disp = e.trim();
             console.log(disp);
