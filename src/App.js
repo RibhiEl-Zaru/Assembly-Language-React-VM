@@ -70,10 +70,6 @@ class App extends React.Component {
 
 
     render() {
-
-      console.log(this.state.secondsElapsed);
-      console.log(this.incrementer);
-
       return (
       <div className="papaBear">
         <div >
@@ -184,6 +180,7 @@ class App extends React.Component {
         else{
 
         const instruct=instructions[loc];
+        console.log(instruct);
         UTIL_REGS[0].value="x" + (PCVal + 4);
 
 
@@ -219,7 +216,7 @@ class App extends React.Component {
            if(rtInfo !== null){
 
              if (rtInfo.substr(-1) === "Z"){
-               rt=UTIL_REGS[2];
+               rt=UTIL_REGS[3];
              }else{
                rt=OP_REGS[parseInt(rtInfo.substr(-1))];
              }
@@ -229,7 +226,7 @@ class App extends React.Component {
            }
 
            if(offsetInfo !== null){
-             offset=parseInt(offsetInfo);
+             offset=parseInt(offsetInfo)*4; //Multiply by 4 to keep it in terms of words
            }
            if(dispInfo !== null){
              disp=parseInt(dispInfo);
@@ -253,16 +250,17 @@ class App extends React.Component {
       this.reset();
       this.setState({operationRegs : OP_REGS});
       let success=true;
-
+      const home = this;
 
       instructions=[]; // Reset instructions.
 
       let rawCode=this.state.code.replace(/(\r\n|\n|\r)/gm,"");
 
+      console.log(rawCode);
+
       if(!rawCode.includes(";")){
         this.setNotification("Make sure you end your lines with ;");
         success=false;
-        var home=this;
         setTimeout((function(){
           home.setNotification("")
         }), 3000);
@@ -270,6 +268,7 @@ class App extends React.Component {
       compiledCode=rawCode.split(";");
       compiledCode.splice(-1, 1); //For some reason there is always an extra space character at the end. This deals with that.
 
+      console.log(compiledCode);
       for (var i=0; i < compiledCode.length ; i ++){
 
         let e=compiledCode[i];
@@ -369,12 +368,12 @@ class App extends React.Component {
 
 
           e=e.substring(e.indexOf(" ")+1, e.length);
-          rd=e.substring(0, e.indexOf(" "));
+          rd=e.substring(0, e.indexOf(","));
+          rd = rd.trim();
 
 
           regExists=this.testForRegisterPresence(rd, false);
 
-          console.log(regExists);
           if(!regExists /*The Value Register does not exist*/){
 
             if(rd.substr(-1) === "Z"){
@@ -415,7 +414,8 @@ class App extends React.Component {
 
 
           e=e.substring(e.indexOf(" ")+1, e.length);
-          rd=e.substring(0, e.indexOf(" "));
+          rd=e.substring(0, e.indexOf(","));
+          rd = rd.trim();
 
           regExists=this.testForRegisterPresence(rd);
           if(!regExists /*The Value Register does not exist*/){
@@ -429,6 +429,7 @@ class App extends React.Component {
           }
           e=e.substring(e.indexOf(" ")+1, e.length);
           rs=e.substring(0, e.indexOf(" "));
+          rs = rs.trim();
 
           regExists=this.testForRegisterPresence(rs, true);
 
@@ -458,7 +459,9 @@ class App extends React.Component {
 
 
         e=e.substring(e.indexOf(" ")+1, e.length);
-        rd=e.substring(0, e.indexOf(" "));
+        rd=e.substring(0, e.indexOf(",")).trim();
+
+
 
         regExists=this.testForRegisterPresence(rd, false);
         if(!regExists /*The Value Register does not exist*/){
@@ -476,9 +479,10 @@ class App extends React.Component {
           break;
 
         }
-        e=e.substring(e.indexOf(" ")+1, e.length);
-        rs=e.substring(0, e.indexOf(" "));
+        e=e.substring(e.indexOf(",")+1, e.length);
 
+        rs=e.substring(0, e.indexOf(","));
+        rs = rs.trim();
         regExists=this.testForRegisterPresence(rs, true);
 
         if(!regExists /*The Source Register does not exist*/){
@@ -490,8 +494,9 @@ class App extends React.Component {
           break;
         }
 
-        e=e.substring(e.indexOf(" ")+1, e.length);
-        rt=e.substring(0, e.indexOf(" "));
+        e=e.substring(e.indexOf(",")+1, e.length);
+        rt=e.substring(0, e.length);
+        rt = rt.trim();
 
         regExists=this.testForRegisterPresence(rt, true);
 
@@ -519,7 +524,9 @@ class App extends React.Component {
             let disp="";
 
             e=e.substring(e.indexOf(" ")+1, e.length);
-            disp=e.substring(0, e.indexOf(" "));
+            console.log(e);
+            disp = e.trim();
+            console.log(disp);
 
             e=e.substring(e.indexOf(" ")+1, e.length);
             e=e.trim();
@@ -545,9 +552,8 @@ class App extends React.Component {
 
 
         e=e.substring(e.indexOf(" ")+1, e.length);
-        rs=e.substring(0, e.indexOf(","));
-        console.log(rs
-        );
+        rs=e.substring(0, e.indexOf(",")).trim();
+
         regExists=this.testForRegisterPresence(rs, true);
 
         if(!regExists /*The Value Register does not exist*/){
@@ -559,8 +565,9 @@ class App extends React.Component {
           break;
 
         }
-        e=e.substring(e.indexOf(" ")+1, e.length);
-        rt=e.substring(0, e.indexOf(" "));
+        e=e.substring(e.indexOf(",")+1, e.length);
+        console.log(e);
+        rt=e.trim();
 
         regExists=this.testForRegisterPresence(rt, true);
 
@@ -581,6 +588,7 @@ class App extends React.Component {
       }
     }
 
+    console.log("instructions are" , instructions);
     if (success){ /*  If there are no*/
       home.setNotification(successfulCompilationNoti);
     }
@@ -632,6 +640,7 @@ class App extends React.Component {
   }
 
   testForRegisterPresence(reg, isDest){
+    console.log("Testing presence of this register:  ", reg);
     if (reg.length > 2){
       return false;
     }

@@ -208,9 +208,12 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
 
   LOD(Rd, offset, Rs){ // LOD Rd, offset(Rs): let base be the contents of register Rs. Then this loads RAM[base + offset] into register Rd.
-    const base = Rs.value;
-
+    const base = Rs.value * 4;
+    console.log("Offset", offset);
+    console.log("RD", Rd);
+    console.log("RS", Rs);
     const dest = base + offset
+    console.log(dest);
     const val = this.props.memory.get(dest); // Val is RAM[base + offset]
     console.log(val);
     Rd.value = val;
@@ -249,8 +252,8 @@ export default class AssemblyLanguageInstructions extends React.Component {
   //CHECK
 
   ADD(RD, RS, RT){ //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
-          const x = RS.value;
-          const y = RT.value;
+          const x = Number(RS.value);
+          const y = Number(RT.value);
 
           const newVal = x + y;
 
@@ -290,6 +293,9 @@ export default class AssemblyLanguageInstructions extends React.Component {
   CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs === Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
     //Get PSW
     const toCheck = RS.value - RT.value;
+    console.log(RS.value);
+    console.log(RT.value);
+    console.log("toCheck is: ", toCheck);
     let val = 0;
     if(toCheck > 1){
       val = 1;
@@ -297,7 +303,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
     else if(toCheck < 1){
       val = -1;
     }
-    this.props.utilRegs.value = val;
+    this.props.utilRegs[1].value = val;
   }
 
   JSR(disp){  // JSR disp: sets RA = PC and then PC = PC + disp.
@@ -312,17 +318,17 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
   R(){ // R: sets PC = RA.
     const RAVal = this.props.utilRegs[2].value;
-    this.props.utilRegs[0].value = "x" + RAVal;
+    this.props.utilRegs[0].value = RAVal;
   }
 
   BLT(disp){ // BLT disp: if PSW is negative, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW >= 0, this instruction does nothing.
     //Get PSW
     const  psw = this.props.utilRegs[1].value;
     if(psw < 0){
-         const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+         const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
         const loc = PCVal/4;
 
-        const newLoc = loc + disp;
+        const newLoc = (loc + disp)*4;
         this.props.utilRegs[0].value = "x" + newLoc;
     }
   }
@@ -336,7 +342,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
      const psw = this.props.utilRegs[1].value;
      console.log(psw);
      if(psw === 0){
-       const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+       const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
        const loc = PCVal/4;
 
        const newLoc = (loc + disp)*4;
@@ -349,18 +355,21 @@ export default class AssemblyLanguageInstructions extends React.Component {
       //Get PSW
       const psw = this.props.utilRegs.value;
       if (psw > 0) {
-          const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+          const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
           const loc = PCVal/4;
-          const newLoc = loc + disp;
+          const newLoc = (loc + disp) * 4;
           this.props.utilRegs[0].value = "x" + newLoc;
       }
   }
 
   JMP(disp){  // JMP disp: causes the new value of PC to be the sum PC + disp.
-     const PCVal = parseInt(this.props.utilRegs[0].value.substring(1)) - 4 ;
+    const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
     const loc = PCVal/4;
 
-    const newLoc = loc + disp;
+    console.log("PCVal is ", PCVal);
+    console.log("loc is ", loc);
+    const newLoc = (loc + disp) * 4;
+    console.log(newLoc);
     this.props.utilRegs[0].value = "x" + newLoc;
 
   }
