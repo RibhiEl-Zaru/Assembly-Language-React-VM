@@ -297,10 +297,10 @@ export default class AssemblyLanguageInstructions extends React.Component {
     console.log(RT.value);
     console.log("toCheck is: ", toCheck);
     let val = 0;
-    if(toCheck > 1){
+    if(toCheck > 0){
       val = 1;
     }
-    else if(toCheck < 1){
+    else if(toCheck < 0){
       val = -1;
     }
     this.props.utilRegs[1].value = val;
