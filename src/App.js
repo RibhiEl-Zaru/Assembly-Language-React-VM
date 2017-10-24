@@ -17,9 +17,9 @@ let OP_REGS=[
 ];
 
 let UTIL_REGS=[
-  { name: "PC", value: "x0"  }, // Holds the address in RAM of the next instruction to be executed
+  { name: "PC", value: 0  }, // Holds the address in RAM of the next instruction to be executed
   { name: "PSW", value: 0    }, //the PSW (or program status word) register holds information about the outcomes of comparisons, etc
-  { name: "RA", value: "x0"     }, // the RA (or return address) register holds the address of the instruction to return to after a JSR.
+  { name: "RA", value: 0     }, // the RA (or return address) register holds the address of the instruction to return to after a JSR.
   { name: "RZ", value: 0     }, // the Zero register holds the constant 0.
 
 ];
@@ -170,9 +170,9 @@ class App extends React.Component {
   }
 
   executeLineOfCode(){
-        let PCVal=parseInt(UTIL_REGS[0].value.substring(1));
+        let PCVal=parseInt(UTIL_REGS[0].value);
         console.log("PCVAl is " , PCVal);
-        let loc=PCVal /4;
+        let loc=PCVal;
 
         if (loc >= instructions.length) {
           console.log("Time to break out!");
@@ -182,7 +182,7 @@ class App extends React.Component {
 
         const instruct=instructions[loc];
         console.log(instruct);
-        UTIL_REGS[0].value="x" + (PCVal + 4);
+        UTIL_REGS[0].value=(PCVal + 1);
 
 
         let instr=instruct[0];
@@ -520,9 +520,11 @@ class App extends React.Component {
       else if (opType == InstrTypes.BREAK){
         let disp="";
 
-        e=e.substring(e.indexOf(" ")+1, e.length);
-        disp=e.substring(0, e.indexOf(" ")).trim();
-        console.log(disp);
+        disp=e.substring(e.indexOf(" ")+1, e.length).trim();
+
+        console.log(e);
+        //disp=e.substring(0, e.indexOf(" ")).trim();
+
 
         e=e.substring(e.indexOf(" ")+1, e.length);
         e=e.trim();
@@ -537,7 +539,7 @@ class App extends React.Component {
 
             let disp="";
 
-            e=e.substring(e.indexOf("(")+1,e.indexOf("("));
+            e=e.substring(e.indexOf("(")+1,e.indexOf(")"));
             console.log(e);
             disp = e.trim();
             console.log(disp);
@@ -633,11 +635,7 @@ class App extends React.Component {
         armInstrs.LI(OP_REGS[i], 0);
       }
       for (var j=0; j < UTIL_REGS.length; j++){
-        if (j === 0 || j === 2){
-          UTIL_REGS[j].value="x0";
-        }else{
           armInstrs.LI(UTIL_REGS[j], 0);
-        }
       }
       this.setState({operationRegs : OP_REGS, utilRegs : UTIL_REGS});
 

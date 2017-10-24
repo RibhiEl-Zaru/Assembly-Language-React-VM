@@ -293,9 +293,6 @@ export default class AssemblyLanguageInstructions extends React.Component {
   CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs === Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
     //Get PSW
     const toCheck = RS.value - RT.value;
-    console.log(RS.value);
-    console.log(RT.value);
-    console.log("toCheck is: ", toCheck);
     let val = 0;
     if(toCheck > 0){
       val = 1;
@@ -308,11 +305,11 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
   JSR(disp){  // JSR disp: sets RA = PC and then PC = PC + disp.
 
-    const PCVal = parseInt(this.props.utilRegs[0].value.substring(1))*4;
-    this.props.utilRegs[2].value = "x" + PCVal; // Set RA = PC
+    const PCVal = this.props.utilRegs[0].value
+    this.props.utilRegs[2].value = PCVal; // Set RA = PC
 
-    const newVal = PCVal + disp*4;
-    this.props.utilRegs[0].value = "x" + newVal; // Set PC = PC + disp;
+    const newVal = PCVal + disp;
+    this.props.utilRegs[0].value = newVal; // Set PC = PC + disp;
 
   }
 
@@ -325,11 +322,10 @@ export default class AssemblyLanguageInstructions extends React.Component {
     //Get PSW
     const  psw = this.props.utilRegs[1].value;
     if(psw < 0){
-         const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
-        const loc = PCVal/4;
-
-        const newLoc = (loc + disp)*4;
-        this.props.utilRegs[0].value = "x" + newLoc;
+        const PCVal = this.props.utilRegs[0].value;
+        const loc = PCVal;
+        const newLoc = (loc + disp);
+        this.props.utilRegs[0].value = newLoc;
     }
   }
 
@@ -338,15 +334,14 @@ export default class AssemblyLanguageInstructions extends React.Component {
   //CHECK
   BEQ(disp){ // BEQ disp: if PSW === 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
       //Get PSW
-     console.log("props", this.props);
      const psw = this.props.utilRegs[1].value;
      console.log(psw);
      if(psw === 0){
-       const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
-       const loc = PCVal/4;
+       const PCVal = this.props.utilRegs[0].value;
+       const loc = PCVal;
 
-       const newLoc = (loc + disp)*4;
-       this.props.utilRegs[0].value = "x" + newLoc;
+       const newLoc = (loc + disp);
+       this.props.utilRegs[0].value = newLoc;
 
      }
   }
@@ -355,22 +350,19 @@ export default class AssemblyLanguageInstructions extends React.Component {
       //Get PSW
       const psw = this.props.utilRegs.value;
       if (psw > 0) {
-          const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
-          const loc = PCVal/4;
-          const newLoc = (loc + disp) * 4;
-          this.props.utilRegs[0].value = "x" + newLoc;
+          const PCVal = this.props.utilRegs[0].value;
+          const loc = PCVal;
+          const newLoc = (loc + disp);
+          this.props.utilRegs[0].value =  newLoc;
       }
   }
 
   JMP(disp){  // JMP disp: causes the new value of PC to be the sum PC + disp.
-    const PCVal = parseInt(this.props.utilRegs[0].value.substring(1));
-    const loc = PCVal/4;
-
-    console.log("PCVal is ", PCVal);
-    console.log("loc is ", loc);
-    const newLoc = (loc + disp) * 4;
+    const PCVal = this.props.utilRegs[0].value;
+    const loc = PCVal;
+    const newLoc = (loc + disp);
     console.log(newLoc);
-    this.props.utilRegs[0].value = "x" + newLoc;
+    this.props.utilRegs[0].value = newLoc;
 
   }
 
