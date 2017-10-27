@@ -10,9 +10,10 @@ export default class Register extends React.Component {
 
   constructor(props){
     super(props);
+
     this.state={
       //dataArray : this.props.dataArray,
-      value: "",
+      value: this.props.value,
       feedback: goodInput,
     }
   }
@@ -21,7 +22,7 @@ export default class Register extends React.Component {
   handleChange(e) {
     let str=e.target.value;
     var isValid=/^[-0-9, ]*$/.test(str);
-    console.log(isValid);
+
 
     if(isValid){
       let newStr=str.replace(/\s+/g,"");
@@ -32,29 +33,25 @@ export default class Register extends React.Component {
       for (var i=0; i < data.length; i++){
         if(isNaN(data[i])){
           this.setState({
-            value: str,
             feedback: badNumber
           });
 
           badNumPres = true;
         }else{
-          this.props.updateDataArray(i*4, data[i]);
-
-
+          console.log(str);
+          this.props.updateDataArray(i*2, data[i], str);
         }
       }
 
       console.log(this.props.dataArray);
       if(!badNumPres){
           this.setState({
-                          value: str,
                           feedback: goodInput
                           });
           }
     }
     else{
       this.setState({
-                    value: str,
                     feedback: badInput
                     });
     }
@@ -63,7 +60,7 @@ export default class Register extends React.Component {
 
   render(){
 
-  //        console.log(this.props.dataArray);
+  
     return(
     <FormGroup
       controlId="formBasicText"
@@ -74,7 +71,7 @@ export default class Register extends React.Component {
       </center>
       <FormControl
         type="text"
-        value={this.state.value}
+        value={this.props.value}
         placeholder="Enter numbers separated by commas"
         onChange={this.handleChange.bind(this)}
       />

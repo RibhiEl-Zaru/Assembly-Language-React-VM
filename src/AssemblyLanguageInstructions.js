@@ -208,7 +208,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
 
   LOD(Rd, offset, Rs){ // LOD Rd, offset(Rs): let base be the contents of register Rs. Then this loads RAM[base + offset] into register Rd.
-    const base = Rs.value * 4;
+    const base = Rs.value * 2;
     console.log("Offset", offset);
     console.log("RD", Rd);
     console.log("RS", Rs);
@@ -225,13 +225,13 @@ export default class AssemblyLanguageInstructions extends React.Component {
      stores the contents of register Rs into location base + offset in the memory.
      */
     console.log("STO");
+    console.log(offset);
     const val = Rs.value;
     const  base = Rd.value;
     const dest = base + offset;
 
     this.props.memory.set(dest, val); // Mem = location base + offset in memory
-    this.props.memOps.push({instruction: "STO " + Rd.name + " " + offset + "(" + Rs.name+ ")", address : "x" + dest, value: val})
-    console.log(this.props.utilRegs);
+    console.log(this.props.memory);
   }
 
   //CHECK

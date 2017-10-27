@@ -63,7 +63,7 @@ export default class ControlConsole extends React.Component {
         <Center>
           <ButtonToolbar>
             <Button onClick={this.props.compileCode} bsStyle="success" bsSize="medium">Compile</Button>
-            <Button onClick={this.props.compileCode} bsStyle="info" bsSize="medium">Reset</Button>
+            <Button onClick={this.props.fullReset} bsStyle="info" bsSize="medium">Reset</Button>
           </ButtonToolbar>
          </Center>
 

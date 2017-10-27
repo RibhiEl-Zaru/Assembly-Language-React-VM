@@ -26,6 +26,8 @@ let UTIL_REGS=[
 
 let MEMORY_OPS=[];
 let MEMORY=new Map();
+let inputMem = new Map();
+let dataValStr = "dfasdfsd";
 
 var InstrTypes={
   NONE:      "X",
@@ -59,7 +61,7 @@ class App extends React.Component {
       utilRegs : UTIL_REGS,
       memoryOps : MEMORY_OPS,
       memory    : MEMORY,
-      inputMem   : new Map(),
+      inputMem   : inputMem,
       currLine : 0,
       pause     : false,
       timer : 3,
@@ -90,6 +92,7 @@ class App extends React.Component {
                                  stopCode={this.setPause.bind(this)}
                                  stepCode={this.step.bind(this)}
                                  code={this.state.code}
+                                 fullReset = {this.fullReset.bind(this)}
                                  notification={this.state.notification}
                                  notiColor={this.state.notificationColor}
                                 />
@@ -98,7 +101,9 @@ class App extends React.Component {
                     <DataDisplay
                         opRegs={this.state.operationRegs}
                         utilRegs={this.state.utilRegs}
-                        memoryOps={this.state.memoryOps}
+                        dataString = {this.state.dataValStr}
+                        memoryOps={this.state.memory}
+                        updateInputMem = {this.updateInputMem.bind(this)}
                         updateDataArray={this.updateMemory.bind(this)}  //Method that gets passed into the updateDataArray so the compiler knows what is input.
                     />
                   </Col>
@@ -110,15 +115,19 @@ class App extends React.Component {
     }
 
 
-  updateMemory(loc, val){
-    this.state.inputMem.set(loc, val);;
-    console.log(this.state.inputMem);
+  updateMemory(loc, val, str){
+    inputMem.set(loc, val);
+    MEMORY.set(loc,val);
+    this.setState({dataValStr : str, inputMem: inputMem, memory: MEMORY});
+
   }
   updateDimensions(){
     this.setState({width : (window.innerWidth/2)})
   }
 
-
+  updateInputMem(inputMem){
+    this.setState({inputMem})
+  }
   componentDidMount(){
     this.updateDimensions();
     window.addEventListener("resize", this.updateDimensions.bind(this));
@@ -171,9 +180,10 @@ class App extends React.Component {
 
   executeLineOfCode(){
         let PCVal=parseInt(UTIL_REGS[0].value);
-        console.log("PCVAl is " , PCVal);
+
         let loc=PCVal;
 
+        //TODO Possibly make this check after an instruction is exectued.
         if (loc >= instructions.length) {
           console.log("Time to break out!");
           this.setPause();
@@ -227,7 +237,7 @@ class App extends React.Component {
            }
 
            if(offsetInfo !== null){
-             offset=parseInt(offsetInfo)*4; //Multiply by 4 to keep it in terms of words
+             offset=parseInt(offsetInfo)*2; //Multiply by 2 to keep it in terms of words
            }
            if(dispInfo !== null){
              disp=parseInt(dispInfo);
@@ -613,6 +623,12 @@ class App extends React.Component {
     }), 3000);
 
   }
+  fullReset(){
+    this.reset();
+    this.memoryWipe();
+    console.log(this.state.inputMem);
+    console.log(this.state.memory);
+  }
 
   reset(){
       this.resetRegisters();
@@ -641,18 +657,25 @@ class App extends React.Component {
 
   }
 
+  memoryWipe(){
+    this.state.inputMem.clear();
+    this.state.memory.clear();
+    this.state.dataValStr = "";
+    this.setState({inputMem})
+    this.setState({memory: MEMORY})
+  }
   resetMemory(){
     MEMORY.clear();
     MEMORY_OPS.length=0; // This is a means of clearing the memory_Ops while maintaining the pointer.
+
     for (let [k, v] of this.state.inputMem) {
       /*    Read what was held in the inputArray, and put that in the MEMORY*/
       MEMORY.set(k, v);
     }
-    this.setState({MEMORY, MEMORY_OPS})
+    this.setState({MEMORY, MEMORY_OPS, inputMem})
   }
 
   testForRegisterPresence(reg, isDest){
-    console.log("Testing presence of this register:  ", reg);
     if (reg.length > 2){
       return false;
     }

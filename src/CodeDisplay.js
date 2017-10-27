@@ -53,6 +53,7 @@ export default class CodeDisplay extends React.Component {
                     changeNoti={this.props.changeNoti}
                     fileArray={this.state.fileArray}
                     playCode={this.props.testRun}
+                    fullReset = {this.props.fullReset}
                     stopCode={this.props.stopCode}
                     stepCode={this.props.stepCode}
                     timer={this.props.timer}

@@ -31,6 +31,7 @@ export default class DataDisplay extends React.Component {
 
         <div>
             <DataSegment
+              value = {this.props.dataString}
               updateDataArray={this.props.updateDataArray}
             />
         </div>
@@ -48,6 +49,7 @@ export default class DataDisplay extends React.Component {
         <div>
               <MemoryDisplay
                   memoryOps={this.props.memoryOps}
+                  updateInputMem = {this.props.updateInputMem}
               />
         </div>
 
