@@ -21,35 +21,46 @@ export default class MemoryDisplay extends React.Component {
    render() {
      memory.size = 0;
      let  memoryShown;
+     console.log("MEMDISP" , this.props.memoryOps);
+     console.log(this.props.memoryOps.size);
      if (this.props.memoryOps.size <= 0){
        memoryShown=(
 
          <center>
-            <h6>
+            <h5>
               No Contents in Memory
-            </h6>
+            </h5>
          </center>
 
        )
      }
      memory.length = 0;
     // console.log("MEMORY 0", memory);
-    console.log(this.props.memoryOps);
+    let index = 0;
      {this.props.memoryOps.forEach(function(value, key){
 
         if(value.toString().length > 0){
           console.log(value);
-        memory.push(<center>
-              <label>
-              <DataRow
-                 address= {key}
-                 value={value}
-                 width="200px"
-               />
-              </label>
-
-              </center>)
-            }
+          if(index % 2 == 0){
+              memory.push(
+                    <center>
+                    <DataRow
+                       address= {key}
+                       value={value}
+                       width="200px"
+                     />
+                    </center>)
+                  }
+        else{
+          memory.push(
+                <DataRow
+                   address= {key}
+                   value={value}
+                   width="200px"
+                 />
+               )
+              }
+        }
       })}
 
 

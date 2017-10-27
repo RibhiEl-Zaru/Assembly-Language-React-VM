@@ -9,15 +9,11 @@ export default class DataRow extends React.Component {
 
   render(){
     return(
-      <div>
-
       <h4>
         <label className="instruction">
-        {this.props.address} &nbsp; &nbsp; &nbsp; &nbsp;   {this.props.value}
+        {this.props.address} &nbsp; :  &nbsp;   {this.props.value}
         </label>
       </h4>
-
-      </div>
     )
   }
 }

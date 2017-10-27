@@ -105,14 +105,13 @@
 
 .instruction {
   border:2px solid black;
-  padding: 5px;
-  width: 300px;
+  padding:10px;
+  width: 150px;
   background-color: #9F9F9F;
-  border-radius: 5px;
+  border-radius: 25px;
   word-wrap: break-word;
   font-weight: bold;
   font-family: sans-serif;
-  text-align: left;
   color: #FFFFFF;
 }
 

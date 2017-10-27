@@ -32,6 +32,7 @@ export default class DataDisplay extends React.Component {
         <div>
             <DataSegment
               value = {this.props.dataString}
+              clearDataArray = {this.props.clearDataArray}
               updateDataArray={this.props.updateDataArray}
             />
         </div>

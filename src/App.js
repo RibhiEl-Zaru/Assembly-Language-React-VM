@@ -102,6 +102,7 @@ class App extends React.Component {
                         opRegs={this.state.operationRegs}
                         utilRegs={this.state.utilRegs}
                         dataString = {this.state.dataValStr}
+                        clearDataArray = {this.memoryWipe.bind(this)}
                         memoryOps={this.state.memory}
                         updateInputMem = {this.updateInputMem.bind(this)}
                         updateDataArray={this.updateMemory.bind(this)}  //Method that gets passed into the updateDataArray so the compiler knows what is input.
@@ -113,6 +114,7 @@ class App extends React.Component {
 
       );
     }
+
 
 
   updateMemory(loc, val, str){
@@ -256,10 +258,17 @@ class App extends React.Component {
 
 
   }
-
+  compressCode(){
+    let noLines=this.state.code.replace(/(\r\n|\n|\r)/gm,"");
+    let seperatedLines=noLines.replace(/;/g,";\n");
+    this.setState({
+      code : seperatedLines
+    })
+  }
   compileCode(){
       this.reset();
       this.setState({operationRegs : OP_REGS});
+      this.compressCode();
       let success=true;
       const home = this;
 

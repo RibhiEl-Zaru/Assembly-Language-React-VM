@@ -30,6 +30,8 @@ export default class Register extends React.Component {
       let data=numbers.split(",")
       let badNumPres = false;
 
+      this.props.clearDataArray();
+      console.log("DATA" ,data);
       for (var i=0; i < data.length; i++){
         if(isNaN(data[i])){
           this.setState({
@@ -39,7 +41,9 @@ export default class Register extends React.Component {
           badNumPres = true;
         }else{
           console.log(str);
-          this.props.updateDataArray(i*2, data[i], str);
+          if(str.length > 0){
+            this.props.updateDataArray(i*2, data[i], str);
+          }
         }
       }
 
@@ -60,7 +64,7 @@ export default class Register extends React.Component {
 
   render(){
 
-  
+
     return(
     <FormGroup
       controlId="formBasicText"
