@@ -31,7 +31,7 @@ export default class Register extends React.Component {
       let badNumPres = false;
 
       this.props.clearDataArray();
-      console.log("DATA" ,data);
+
       for (var i=0; i < data.length; i++){
         if(isNaN(data[i])){
           this.setState({

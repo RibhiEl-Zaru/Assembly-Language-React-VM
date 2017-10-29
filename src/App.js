@@ -116,7 +116,6 @@ class App extends React.Component {
     }
 
 
-
   updateMemory(loc, val, str){
     inputMem.set(loc, val);
     MEMORY.set(loc,val);
