@@ -17,10 +17,10 @@ let OP_REGS=[
 ];
 
 let UTIL_REGS=[
-  { name: "PC", value: 0  }, // Holds the address in RAM of the next instruction to be executed
+  { name: "PC", value: 1  }, // Holds the address in RAM of the next instruction to be executed
   { name: "PSW", value: 0    }, //the PSW (or program status word) register holds information about the outcomes of comparisons, etc
-  { name: "RA", value: 0     }, // the RA (or return address) register holds the address of the instruction to return to after a JSR.
-  { name: "RZ", value: 0     }, // the Zero register holds the constant 0.
+  { name: "RA", value: 1     }, // the RA (or return address) register holds the address of the instruction to return to after a JSR.
+  { name: "Zero", value: 0     }, // the Zero register holds the constant 0.
 
 ];
 
@@ -182,7 +182,7 @@ class App extends React.Component {
   executeLineOfCode(){
         let PCVal=parseInt(UTIL_REGS[0].value);
 
-        let loc=PCVal;
+        let loc=PCVal -1;
 
         //TODO Possibly make this check after an instruction is exectued.
         if (loc >= instructions.length) {
@@ -212,8 +212,9 @@ class App extends React.Component {
         let offset=null;
         let disp=null;
 
+        console.log(rsInfo);
         if(rsInfo !== null){
-                if (rsInfo.substr(-1) === "Z"){
+                if (rsInfo.toUpperCase() === "ZERO"){
                   rs=UTIL_REGS[3];
                 }else{
                   rs=OP_REGS[parseInt(rsInfo.substr(-1))];
@@ -221,37 +222,39 @@ class App extends React.Component {
 
              }
             //IF RD is ZeroRegister! WE have to notify the user that that is ILLEGAL
-            if(rdInfo !== null){
-                 rd=OP_REGS[parseInt(rdInfo.substr(-1))];
-             }
+        if(rdInfo !== null){
+             rd=OP_REGS[parseInt(rdInfo.substr(-1))];
+         }
 
-           if(rtInfo !== null){
+        if(rtInfo !== null){
 
-             if (rtInfo.substr(-1) === "Z"){
-               rt=UTIL_REGS[3];
-             }else{
-               rt=OP_REGS[parseInt(rtInfo.substr(-1))];
-             }
+         if (rtInfo.toUpperCase() === "ZERO"){
+           rt=UTIL_REGS[3];
+         }else{
+           rt=OP_REGS[parseInt(rtInfo.substr(-1))];
            }
-           if(immediateInfo !== null){
-             number=parseInt(immediateInfo);
-           }
+         }
 
-           if(offsetInfo !== null){
-             offset=parseInt(offsetInfo)*2; //Multiply by 2 to keep it in terms of words
-           }
-           if(dispInfo !== null){
-             disp=parseInt(dispInfo);
-           }
+        if(immediateInfo !== null){
+           number=parseInt(immediateInfo);
+         }
+
+        if(offsetInfo !== null){
+           offset=parseInt(offsetInfo)*2; //Multiply by 2 to keep it in terms of words
+         }
+
+        if(dispInfo !== null){
+           disp=parseInt(dispInfo);
+        }
 
 
-           armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
+        armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
            //Increment PC
-           this.setState({
+         this.setState({
                utilRegs : UTIL_REGS,
                memoryOps : MEMORY_OPS,
                operationRegs : OP_REGS
-             });
+           });
     }
 
 
@@ -333,7 +336,7 @@ class App extends React.Component {
 
           if(!regExists /*The Value Register does not exist*/){
 
-            if(rd.substr(-1) === "Z"){
+            if(rd === "Zero"){
               this.setNotification("Cannot use RZ as a Destination Register");
             }else{
               this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
@@ -395,7 +398,7 @@ class App extends React.Component {
 
           if(!regExists /*The Value Register does not exist*/){
 
-            if(rd.substr(-1) === "Z"){
+            if(rd.substr(0) === "Z"){
               this.setNotification("Cannot use RZ as a Destination Register");
             }else{
               this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
@@ -485,7 +488,7 @@ class App extends React.Component {
         regExists=this.testForRegisterPresence(rd, false);
         if(!regExists /*The Value Register does not exist*/){
 
-          if(rd.substr(-1) === "Z"){
+          if(rd.substr(0) === "Z"){
             this.setNotification("Cannot use RZ as a Destination Register");
           }else{
             this.setNotification("Dest Register in instruction " + (i+1) + " does not exist");
@@ -634,8 +637,6 @@ class App extends React.Component {
   fullReset(){
     this.reset();
     this.memoryWipe();
-    console.log(this.state.inputMem);
-    console.log(this.state.memory);
   }
 
   reset(){
@@ -659,7 +660,13 @@ class App extends React.Component {
         armInstrs.LI(OP_REGS[i], 0);
       }
       for (var j=0; j < UTIL_REGS.length; j++){
-          armInstrs.LI(UTIL_REGS[j], 0);
+        if(j == 0){
+          armInstrs.LI(UTIL_REGS[j], 1);
+        }
+        else{
+            armInstrs.LI(UTIL_REGS[j], 0);
+        }
+
       }
       this.setState({operationRegs : OP_REGS, utilRegs : UTIL_REGS});
 
@@ -684,15 +691,15 @@ class App extends React.Component {
   }
 
   testForRegisterPresence(reg, isDest){
+
+    if (reg.toUpperCase() === "ZERO"){
+      return (true && isDest);
+    }
     if (reg.length > 2){
       return false;
     }
-
-    if(reg.substr(0,1) !== "R"){
+    else if(reg.substr(0,1) !== "R"){
       return false;
-    }
-    if (reg.substr(-1) === "Z"){
-      return (true && isDest);
     }
 
     let loc = 0;

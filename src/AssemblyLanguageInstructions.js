@@ -66,7 +66,6 @@ var MethodEnum = {
 
 
 
-
   methods: {
 
     /*
@@ -111,6 +110,7 @@ var MethodEnum = {
 
 
 export default class AssemblyLanguageInstructions extends React.Component {
+
 
   getMethodType(methodName){
     let method = MethodEnum.methods[methodName.toUpperCase()];
@@ -276,7 +276,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const x = Rs.value;
     const y = Rt.value;
-    const newVal = x * y;
+    const newVal = this.round((x / y), 2);
     Rd.value = newVal;
   }
 
@@ -285,7 +285,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const x = Rs.value;
     const y = Rt.value;
-    const newVal = x / y;
+    const newVal = this.round((x / y), 2);
     Rd.value = newVal;
   }
 
@@ -364,6 +364,10 @@ export default class AssemblyLanguageInstructions extends React.Component {
     console.log(newLoc);
     this.props.utilRegs[0].value = newLoc;
 
+  }
+
+  round(value, decimals) {
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
   }
 
 }

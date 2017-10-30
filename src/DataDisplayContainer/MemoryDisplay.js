@@ -21,8 +21,8 @@ export default class MemoryDisplay extends React.Component {
    render() {
      memory.size = 0;
      let  memoryShown;
-     console.log("MEMDISP" , this.props.memoryOps);
-     console.log(this.props.memoryOps.size);
+  //   console.log("MEMDISP" , this.props.memoryOps);
+  //   console.log(this.props.memoryOps.size);
      if (this.props.memoryOps.size <= 0){
        memoryShown=(
 
@@ -40,7 +40,7 @@ export default class MemoryDisplay extends React.Component {
      {this.props.memoryOps.forEach(function(value, key){
 
         if(value.toString().length > 0){
-          console.log(value);
+      //    console.log(value);
           if(index % 2 == 0){
               memory.push(
                     <center>
