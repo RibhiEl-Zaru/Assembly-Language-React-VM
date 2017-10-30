@@ -224,14 +224,12 @@ export default class AssemblyLanguageInstructions extends React.Component {
     /* STO Rs, offset(Rd): let base be the contents of register Rd,
      stores the contents of register Rs into location base + offset in the memory.
      */
-    console.log("STO");
-    console.log(offset);
     const val = Rs.value;
     const  base = Rd.value;
     const dest = base + offset;
 
     this.props.memory.set(dest, val); // Mem = location base + offset in memory
-    console.log(this.props.memory);
+
   }
 
   //CHECK
@@ -242,8 +240,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
   //CHECK
   MOV(Rd, Rs){   // MOV Rd, Rs: copies the contents of register Rs into register Rd.
-    console.log(Rd);
-    console.log(Rs);
+
     const val = Rs.value;
 
     Rd.value = val;
@@ -252,13 +249,11 @@ export default class AssemblyLanguageInstructions extends React.Component {
   //CHECK
 
   ADD(RD, RS, RT){ //ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
-          const x = Number(RS.value);
-          const y = Number(RT.value);
+      const x = Number(RS.value);
+      const y = Number(RT.value);
 
-          const newVal = x + y;
-
-          console.log("newVal " + newVal);
-          RD.value = newVal;
+      const newVal = this.round((x + y), 0);
+      RD.value = newVal;
     }
 
   //CHECK
@@ -267,7 +262,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const x = RS.value;
     const y = RT.value;
-    const newVal = x - y;
+    const newVal = this.round((x - y), 0);
     RD.value = newVal;
   }
 
@@ -276,7 +271,7 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const x = Rs.value;
     const y = Rt.value;
-    const newVal = this.round((x / y), 2);
+    const newVal = this.round((x / y), 0);
     Rd.value = newVal;
   }
 
@@ -285,21 +280,14 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const x = Rs.value;
     const y = Rt.value;
-    const newVal = this.round((x / y), 2);
+    const newVal = this.round((x / y), 0);
     Rd.value = newVal;
   }
 
   //CHECK
   CMP(RS, RT){ // CMP Rs, Rt: sets PSW = Rs - Rt. Note that if Rs > Rt, then PSW will be positive, if Rs === Rt, then PSW will be 0 and if Rs < Rt, then PSW will be negative.
     //Get PSW
-    const toCheck = RS.value - RT.value;
-    let val = 0;
-    if(toCheck > 0){
-      val = 1;
-    }
-    else if(toCheck < 0){
-      val = -1;
-    }
+    const val = RS.value - RT.value;
     this.props.utilRegs[1].value = val;
   }
 
@@ -335,7 +323,6 @@ export default class AssemblyLanguageInstructions extends React.Component {
   BEQ(disp){ // BEQ disp: if PSW === 0, causes the new value of PC to be the sum PC + disp. Note that if disp is negative, this will cause the program to jump backward in the sequence of instructions. If PSW != 0, this instruction does nothing.
       //Get PSW
      const psw = this.props.utilRegs[1].value;
-     console.log(psw);
      if(psw === 0){
        const PCVal = this.props.utilRegs[0].value;
        const loc = PCVal;

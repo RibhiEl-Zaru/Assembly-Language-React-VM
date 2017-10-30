@@ -27,7 +27,7 @@ let UTIL_REGS=[
 let MEMORY_OPS=[];
 let MEMORY=new Map();
 let inputMem = new Map();
-let dataValStr = "dfasdfsd";
+let dataValStr = "";
 
 var InstrTypes={
   NONE:      "X",
