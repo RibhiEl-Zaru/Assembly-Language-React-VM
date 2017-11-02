@@ -271,9 +271,8 @@ export default class AssemblyLanguageInstructions extends React.Component {
 
     const x = Rs.value;
     const y = Rt.value;
-    console.log(x, y);
     const newVal = this.round((x * y), 0);
-    console.log(newVal);
+
     Rd.value = newVal;
   }
 

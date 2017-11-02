@@ -1,12 +1,11 @@
 <snippet>
   <content><![CDATA[
 
-#  Project Name
+## Simple VM in React.js
 
 This project was written by Ribhi El-Zaru with the supervision
 of Robert Muller for use by the Computer Science 101 Honors class
 at Boston College in 2017.
-
 
 Below you will find some information on how to use this webapp
 to visualize and customize your assembly language code, as well
@@ -15,8 +14,15 @@ as details regarding constraints and features of the web application.
 
 ## Installation
 
+Installing the source code for your own experimentation and fine-tuning is simple!
 
-## Usage
+Just download the .zip file, change directory of your terminal to that unzipped folder and enter "npm install" and then "npm start". After entering "npm start", the web-app should open up in your preferred browser, allowing you to play around with the simple assembly language instructions explained below!
+
+P.S. You may have to type "sudo npm install" instead in order to authorize your computer to download the npm packages required to running this web-app locally.
+
+
+
+## The Assembly Language
 
 Description of the Registers used in the SVM are below.
 
@@ -49,7 +55,11 @@ BGT disp: if PSW, is positive, causes the new value of PC to be the sum PC + dis
 JMP disp: causes the new value of PC to be the sum PC + disp.
 HLT: causes the svm machine to print the contents of registers PC, PSW, RA, R0, R1, R2 and R3. It then stops, returning ().
 
+## Using the application
 
+The web application is broken into 5 sections, all explained below.
+
+# One
 
 ## Contributing
 
@@ -58,6 +68,5 @@ HLT: causes the svm machine to print the contents of registers PC, PSW, RA, R0, 
 ## License
 
 ]]</content>
-<tabTrigger> readme </tabTrigger>
 
 </snippet>
