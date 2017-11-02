@@ -306,7 +306,7 @@ class App extends React.Component {
 
       let rawCode=this.state.code.replace(/(\r\n|\n|\r)/gm,"");
 
-      console.log(rawCode);
+      rawCode = rawCode.toUpperCase()
 
       if(!rawCode.includes(";")){
         this.setNotification("Make sure you end your lines with ;");
