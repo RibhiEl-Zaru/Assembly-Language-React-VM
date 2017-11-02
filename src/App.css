@@ -15,7 +15,11 @@
   font-size: large;
 }
 
-
+.myMarker {
+  position:absolute;
+  background: red;
+  z-index:20
+}
 .regDisplay {
    border:0px solid red;
    background-color: inherit;

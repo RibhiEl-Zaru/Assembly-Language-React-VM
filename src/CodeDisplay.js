@@ -2,6 +2,10 @@ import React from "react";
 import AceEditor from 'react-ace';
 import Center from 'react-center';
 import ControlConsole from "./CodeDisplayContents/ControlConsole.js"
+import brace from 'brace';
+
+import 'brace/mode/java';
+import 'brace/theme/github';
 
 //import ReactFileReader from 'react-file-reader';
 //import CodeEditor from "./CodeDisplayContainer/CodeEditor.js";
@@ -10,13 +14,20 @@ export default class CodeDisplay extends React.Component {
 
   constructor(props){
     super(props);
+
     this.state={
       fileArray: [],
     }
   }
 
+/*
+
+this.refs.editor.selection.moveCursorToPosition({row: 1, column: 0});
+this.refs.editor.selection.selectLine();
+*/
   onEditorChange(e){
     this.props.changeCode(e);
+    console.log(this.refs.ace.editor.session);
   }
 
 
@@ -24,23 +35,14 @@ export default class CodeDisplay extends React.Component {
     return(
       <div id="parent">
 
-        <div id="editor">
-
-          <AceEditor
-             mode="python"
-             fontSize="16pt"
-             theme="solarized_dark"
-             onChange={this.onEditorChange.bind(this)}
-             width={this.props.width/2}
-             value={this.props.code}
-             name="UNIQUE_ID_OF_DIV"
-             editorProps={{$blockScrolling: true}}
-            />
-
-      </div>
+      <Editor ref = "ace"
+          onEditorChange={this.onEditorChange.bind(this)}
+          width = {this.props.width/2}
+          code = {this.props.code}
+      />
 
 
-      <div id="notification" >
+      <div id="notification" ref = "noti" >
         {/*TODO Make this font color change. */}
            <Center> {this.props.notification}  </Center>
       </div>
@@ -64,9 +66,9 @@ export default class CodeDisplay extends React.Component {
       </div>
       </div>
     )
+
+
   }
-
-
 
     onFileDrop(fileArray){
       this.setState({fileArray});
@@ -85,4 +87,30 @@ export default class CodeDisplay extends React.Component {
         reader.readAsBinaryString(file);
       })
     }
+
+}
+
+
+class Editor extends AceEditor{
+
+  render(){
+    return(
+      <div id="editor">
+        <AceEditor
+           mode="python"
+           fontSize="16pt"
+           theme="solarized_dark"
+           onChange={this.props.onEditorChange}
+           width={this.props.width/2}
+           value={this.props.code}
+           name="UNIQUE_ID_OF_DIV"
+           editorProps={{$blockScrolling: true}}
+          />
+
+    </div>
+    )
+  }
+
+
+
 }

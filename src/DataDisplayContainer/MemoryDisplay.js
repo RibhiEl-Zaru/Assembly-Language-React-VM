@@ -21,8 +21,6 @@ export default class MemoryDisplay extends React.Component {
    render() {
      memory.size = 0;
      let  memoryShown;
-  //   console.log("MEMDISP" , this.props.memoryOps);
-  //   console.log(this.props.memoryOps.size);
      if (this.props.memoryOps.size <= 0){
        memoryShown=(
 
@@ -35,12 +33,10 @@ export default class MemoryDisplay extends React.Component {
        )
      }
      memory.length = 0;
-    // console.log("MEMORY 0", memory);
     let index = 0;
      {this.props.memoryOps.forEach(function(value, key){
 
         if(value.toString().length > 0){
-      //    console.log(value);
           if(index % 2 == 0){
               memory.push(
                     <center>
@@ -63,9 +59,6 @@ export default class MemoryDisplay extends React.Component {
         }
       })}
 
-
-    //  console.log("MEM DISPLAY!", this.props.memoryOps);
-    //  console.log("MEMORY 1",memory);
        return (
          <div>
 
@@ -80,17 +73,3 @@ export default class MemoryDisplay extends React.Component {
        )
      }
 }
-
-/*
-{this.props.memoryOps.map((key, value) => (
-
- <center>
-  <DataRow
-     address= {value}
-     value={key}
-     width="200px"
-   />
-   </center>
-))}
-
-*/

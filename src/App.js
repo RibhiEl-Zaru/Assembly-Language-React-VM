@@ -5,7 +5,12 @@ import { Grid, Row, Col } from "react-bootstrap";
 import CodeDisplay from "./CodeDisplay.js";
 import AssemblyLanguageInstructions from "./AssemblyLanguageInstructions.js";
 import DataDisplay from "./DataDisplay.js";
-import Header from "./Header.js"
+import Header from "./Header.js";
+import brace from 'brace';
+
+import 'brace/mode/java';
+import 'brace/theme/github';
+
 
 let successfulCompilationNoti="Compilation Successful!";
 let OP_REGS=[
@@ -29,6 +34,7 @@ let MEMORY=new Map();
 let inputMem = new Map();
 let dataValStr = "";
 
+
 var InstrTypes={
   NONE:      "X",
   REGISTER:  "R",
@@ -49,6 +55,8 @@ let compiledCode=[];
 let instructions=[];
 let armInstrs=new AssemblyLanguageInstructions({utilRegs: UTIL_REGS, memory: MEMORY, memOps: MEMORY_OPS});
 
+var ace = require('brace');
+var Range = ace.acequire('ace/range').Range
 class App extends React.Component {
   constructor(){
     super();
@@ -71,8 +79,13 @@ class App extends React.Component {
   }
 
 
+  testMethod(e){
+    console.log("TEST");
+    console.log(e);
+  }
 
-    render() {
+  render() {
+    console.log(this.state.dataValStr);
       return (
       <div className="papaBear">
         <div >
@@ -81,7 +94,8 @@ class App extends React.Component {
               <Grid>
                 <Row>
                   <Col md={8} sm={8} lg={8}>
-                    <CodeDisplay width={this.state.codeDisplayWidth +"px"}
+                    <CodeDisplay ref = "codeDisp"
+                                width={this.state.codeDisplayWidth +"px"}
                                  timer={this.state.timer}
                                  timerChange={this.setTimer.bind(this)}
                                  compileCode={this.compileCode.bind(this)}
@@ -95,6 +109,7 @@ class App extends React.Component {
                                  fullReset = {this.fullReset.bind(this)}
                                  notification={this.state.notification}
                                  notiColor={this.state.notificationColor}
+                                 selectedLine = {UTIL_REGS[0].value}
                                 />
                   </Col>
                   <Col md={4} sm={4} lg={4}>
@@ -179,10 +194,20 @@ class App extends React.Component {
 
   }
 
+  selectAceLine(num){
+    const editor = this.refs.codeDisp.refs.ace.editor;
+
+    console.log(editor.session);
+    editor.session.addDynamicMarker(new Range( 0, 0, 1,  1), "myMarker", "fullLine", true);
+
+  }
+
   executeLineOfCode(){
         let PCVal=parseInt(UTIL_REGS[0].value);
+        this.selectAceLine(PCVal)
 
         let loc=PCVal -1;
+
 
         //TODO Possibly make this check after an instruction is exectued.
         if (loc >= instructions.length) {
@@ -192,7 +217,6 @@ class App extends React.Component {
         else{
 
         const instruct=instructions[loc];
-        console.log(instruct);
         UTIL_REGS[0].value=(PCVal + 1);
 
 
@@ -250,16 +274,20 @@ class App extends React.Component {
 
         armInstrs.executeInstruction(instr,  rd, rs,  rt, number, offset, disp);
            //Increment PC
-         this.setState({
+        this.updateDataArray()
+
+        console.log(MEMORY);
+        this.setState({
                utilRegs : UTIL_REGS,
                memoryOps : MEMORY_OPS,
                operationRegs : OP_REGS
-           });
+         });
     }
 
 
 
   }
+
   compressCode(){
     let noLines=this.state.code.replace(/(\r\n|\n|\r)/gm,"");
     let seperatedLines=noLines.replace(/;/g,";\n");
@@ -290,7 +318,6 @@ class App extends React.Component {
       compiledCode=rawCode.split(";");
       compiledCode.splice(-1, 1); //For some reason there is always an extra space character at the end. This deals with that.
 
-      console.log(compiledCode);
       for (var i=0; i < compiledCode.length ; i ++){
 
         let e=compiledCode[i];
@@ -660,7 +687,7 @@ class App extends React.Component {
         armInstrs.LI(OP_REGS[i], 0);
       }
       for (var j=0; j < UTIL_REGS.length; j++){
-        if(j == 0){
+        if(j == 0 || j == 2){
           armInstrs.LI(UTIL_REGS[j], 1);
         }
         else{
@@ -689,6 +716,25 @@ class App extends React.Component {
     }
     this.setState({MEMORY, MEMORY_OPS, inputMem})
   }
+
+  updateDataArray(){
+    let dataValStr = this.state.dataValStr
+
+    if (dataValStr != null){
+        let strs = dataValStr.split(",")
+        const memMax = strs.length * 2
+        console.log("DFSD'");
+        for (const[k, v ] of MEMORY){
+          if (k < memMax){
+            strs[(k/2)] = v
+          }
+        }
+
+        dataValStr = strs.join(", ");
+      }
+
+    this.setState({dataValStr})
+    }
 
   testForRegisterPresence(reg, isDest){
 
